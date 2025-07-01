@@ -1046,9 +1046,10 @@ async function gerarPDF() {
   page.drawText(numNoites, { x: 285, y: 468, ...estilo });
   page.drawText("R$ " + total, { x: 30, y: 432, ...estilo });
   page.drawText("R$ " + taxaLimpeza, { x: 285, y: 432, ...estilo });
-
+  
   page.drawText("R$ " + valorParcela, { x: 30, y: 383, ...estilo });
   page.drawText(numParcelas, { x: 285, y: 383, ...estilo });
+    page.drawText(formaPagamento, { x: 300, y: 383, ...estilo });
 
 
   // Gera e baixa o PDF
@@ -1090,6 +1091,7 @@ function salvarJSON() {
         taxaLimpeza: document.getElementById('taxaLimpeza').value,
         desconto: document.getElementById('desconto').value,
         total: document.getElementById('valorTotal').value,
+      formaPagamento: document.querySelector('input[name="pagamento"]:checked').value,
         numParcelas: document.getElementById('numParcelas').value,
         valorParcela: document.getElementById('valorParcela').value
     };
@@ -1136,6 +1138,7 @@ function carregarJSON() {
         document.getElementById('taxaLimpeza').value = dadosReserva.taxaLimpeza;
         document.getElementById('desconto').value = dadosReserva.desconto;
         document.getElementById('valorTotal').value = dadosReserva.total;
+        document.querySelector(`input[name="pagamento"][value="${dadosReserva.formaPagamento}"]`).checked = true;
         document.getElementById('numParcelas').value = dadosReserva.numParcelas;
         document.getElementById('valorParcela').value = dadosReserva.valorParcela;
     };
