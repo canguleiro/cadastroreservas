@@ -1044,12 +1044,12 @@ async function gerarPDF() {
   page.drawText(numCriancas, { x: 285, y: 505, ...estilo });
   page.drawText("R$ " + valorDiaria, { x: 30, y: 465, ...estilo });
   page.drawText(numNoites, { x: 285, y: 465, ...estilo });
-  page.drawText("R$ " + total, { x: 30, y: 445, ...estilo });
-  page.drawText("R$ " + taxaLimpeza, { x: 285, y: 445, ...estilo });
+  page.drawText("R$ " + total, { x: 30, y: 435, ...estilo });
+  page.drawText("R$ " + taxaLimpeza, { x: 285, y: 435, ...estilo });
   
-  page.drawText(formaPagamento, { x: 30, y: 535, ...estilo });
-  page.drawText(numParcelas, { x: 285, y: 535, ...estilo });
-  page.drawText("R$ " + valorParcela, { x: 300, y: 535, ...estilo });
+  page.drawText(formaPagamento, { x: 30, y: 415, ...estilo });
+  page.drawText(numParcelas, { x: 285, y: 415, ...estilo });
+  page.drawText("R$ " + valorParcela, { x: 300, y: 415, ...estilo });
 
   // Gera e baixa o PDF
   const pdfBytes = await pdfDoc.save();
