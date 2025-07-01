@@ -1033,23 +1033,23 @@ async function gerarPDF() {
   // Preenchimento dos dados no PDF (coordenadas ajustadas para o modelo)
   page.drawText(nome, { x: 30, y: 705, ...estilo });
   page.drawText(nascimento, { x: 285, y: 705, ...estilo });
-  page.drawText(cpf, { x: 40, y: 685, ...estilo });
-  page.drawText(telefone, { x: 200, y: 685, ...estilo });
-  page.drawText(endereco, { x: 45, y: 665, ...estilo });
-  page.drawText(email, { x: 45, y: 645, ...estilo });
+  page.drawText(cpf, { x: 30, y: 685, ...estilo });
+  page.drawText(telefone, { x: 285, y: 685, ...estilo });
+  page.drawText(endereco, { x: 30, y: 665, ...estilo });
+  page.drawText(email, { x: 285, y: 645, ...estilo });
 
-  page.drawText(checkin, { x: 45, y: 595, ...estilo });
-  page.drawText(checkout, { x: 130, y: 595, ...estilo });
-  page.drawText(numNoites, { x: 230, y: 595, ...estilo });
-  page.drawText(numHospedes, { x: 300, y: 595, ...estilo });
-  page.drawText(numCriancas, { x: 380, y: 595, ...estilo });
+  page.drawText(checkin, { x: 30, y: 595, ...estilo });
+  page.drawText(checkout, { x: 285, y: 595, ...estilo });
+  page.drawText(numNoites, { x: 285, y: 595, ...estilo });
+  page.drawText(numHospedes, { x: 30, y: 595, ...estilo });
+  page.drawText(numCriancas, { x: 285, y: 595, ...estilo });
 
-  page.drawText("R$ " + valorDiaria, { x: 470, y: 595, ...estilo });
-  page.drawText("R$ " + taxaLimpeza, { x: 470, y: 575, ...estilo });
-  page.drawText("R$ " + total, { x: 470, y: 555, ...estilo });
+  page.drawText("R$ " + valorDiaria, { x: 30, y: 595, ...estilo });
+  page.drawText("R$ " + taxaLimpeza, { x: 285, y: 575, ...estilo });
+  page.drawText("R$ " + total, { x: 30, y: 555, ...estilo });
 
-  page.drawText(formaPagamento, { x: 45, y: 535, ...estilo });
-  page.drawText(numParcelas, { x: 200, y: 535, ...estilo });
+  page.drawText(formaPagamento, { x: 30, y: 535, ...estilo });
+  page.drawText(numParcelas, { x: 285, y: 535, ...estilo });
   page.drawText("R$ " + valorParcela, { x: 300, y: 535, ...estilo });
 
   // Gera e baixa o PDF
