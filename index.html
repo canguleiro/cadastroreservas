@@ -1038,8 +1038,8 @@ async function gerarPDF() {
   page.drawText(endereco, { x: 30, y: 630, ...estilo });
   page.drawText(email, { x: 285, y: 630, ...estilo });
   
-  page.drawText(checkin, { x: 30, y: 545, ...estilo });
-  page.drawText(checkout, { x: 285, y: 545, ...estilo });
+  page.drawText(checkin, { x: 30, y: 544 ...estilo });
+  page.drawText(checkout, { x: 285, y: 544, ...estilo });
   page.drawText(numHospedes, { x: 30, y: 505, ...estilo });
   page.drawText(numCriancas, { x: 285, y: 505, ...estilo });
   page.drawText("R$ " + valorDiaria, { x: 30, y: 468, ...estilo });
@@ -1047,8 +1047,8 @@ async function gerarPDF() {
   page.drawText("R$ " + total, { x: 30, y: 432, ...estilo });
   page.drawText("R$ " + taxaLimpeza, { x: 285, y: 432, ...estilo });
 
-  page.drawText("R$ " + valorParcela, { x: 30, y: 382, ...estilo });
-  page.drawText(numParcelas, { x: 285, y: 382, ...estilo });
+  page.drawText("R$ " + valorParcela, { x: 30, y: 383, ...estilo });
+  page.drawText(numParcelas, { x: 285, y: 383, ...estilo });
 
 
   // Gera e baixa o PDF
