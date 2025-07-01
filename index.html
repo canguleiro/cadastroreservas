@@ -1042,13 +1042,13 @@ async function gerarPDF() {
   page.drawText(checkout, { x: 285, y: 545, ...estilo });
   page.drawText(numHospedes, { x: 30, y: 505, ...estilo });
   page.drawText(numCriancas, { x: 285, y: 505, ...estilo });
-  page.drawText("R$ " + valorDiaria, { x: 30, y: 467, ...estilo });
-  page.drawText(numNoites, { x: 285, y: 467, ...estilo });
+  page.drawText("R$ " + valorDiaria, { x: 30, y: 468, ...estilo });
+  page.drawText(numNoites, { x: 285, y: 468, ...estilo });
   page.drawText("R$ " + total, { x: 30, y: 432, ...estilo });
   page.drawText("R$ " + taxaLimpeza, { x: 285, y: 432, ...estilo });
 
-  page.drawText("R$ " + valorParcela, { x: 30, y: 380, ...estilo });
-  page.drawText(numParcelas, { x: 285, y: 380, ...estilo });
+  page.drawText("R$ " + valorParcela, { x: 30, y: 382, ...estilo });
+  page.drawText(numParcelas, { x: 285, y: 382, ...estilo });
 
 
   // Gera e baixa o PDF
