@@ -198,62 +198,12 @@ input, select {
     display: none;
 }
 
-/* Acordion Termos & Condições */
-
-   .accordion {
-            cursor: pointer;
-            padding: 5px;
-            width: 100%;
-            text-align: left;
-            border: 1px solid #004080;
-            background-color: #fff;
-            color: #004080;
-        }
-
-        .active, .accordion:hover {
-            background-color: #F2F6FA;
-        }
-
-        .accordion:after {
-            content: '\002B';
-            font-size: 13px;
-            color: #777;
-            float: right;
-            margin-left: 5px;
-        }
-
-        .active:after {
-            content: "\2212";
-        }
-
-        .panel {
-            padding: 0 15px;
-            display: none;
-            background-color: white;
-            overflow: hidden;
-        }
-
-        .panel-content {
-           color: #333; /* Cor do texto */
-           font-size: 14px; /* Tamanho da fonte */
-           padding: 1px; /* Espaçamento interno */
-           margin: 2px;
-    }
 
 
 /* Área de Pagamento */
 
-.form-group-pgto-check {
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center; /* Alinhar verticalmente */
-    
-}
-
 .form-group-pgto {
-    width: 25%;
+    width: 45%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -261,36 +211,6 @@ input, select {
     text-align: center;
 
 }
-
-.moldura {
-  
-  background-color: #E8F3FF;
-  border: 0px solid #004080; /* Borda azul */
-  padding: 3px; /* Espaçamento interno */
-  border-radius: 5px; /* Bordas arredondadas */
-  text-align: center; /* Centralizar o texto */
-  width: 100%
- 
-}
-
-
-
-/* TERMOS E CONDIÇÕES */
-
-.checkbox-container {
-            display: flex;
-            align-items: center;
-            width: 5%;
-        }
-        .checkbox-container input[type="checkbox"] {
-            margin-right: 5px;
-            flex-shrink: 1; /* Para garantir que o checkbox não diminua */
-            
-        }
-        .checkbox-container label {
-            flex-grow: 1; /* Faz o label ocupar o espaço restante */
-            white-space: nowrap; /* Garante que o texto não quebre em várias linhas */
-        }  
 
 
 /* BOTÕES DE AÇÃO */
@@ -311,7 +231,7 @@ input, select {
         }
 
 .botoes-acoes {
-margin-top: 20px;
+  margin-top: 20px;
   text-align: center;
   gap: 10px;
 }
@@ -464,7 +384,7 @@ margin-top: 20px;
             <div class="form-group30">
                 <label for="desconto">DESCONTO (%)</label>
                 <input type="number" id="desconto" name="desconto" class="styled-input">
-                <label for="desconto" class="label-inferior">a partir de 7 noites</label> 
+                <label for="desconto" class="label-inferior">*não se aplica à Taxa de Limpeza</label> 
             </div>
 
             <div class="form-group30">
@@ -479,7 +399,7 @@ margin-top: 20px;
 <div class="section-title">PAGAMENTO</div>
 
 <div class="form-group-pgto">
-  <label for="numParcelas">Nº DE PARCELAS:</label>
+  <label for="numParcelas">NÚMERO DE PARCELAS:</label>
   <input type="number" id="numParcelas" name="numParcelas" min="1" max="12" value="1" class="styled-input" oninput="calcularValorParcela()">
 </div>
 
@@ -494,7 +414,6 @@ margin-top: 20px;
   <input type="file" id="arquivoJSON" accept=".json" style="display: none;" onchange="carregarJSON()" />
   <button type="button" onclick="document.getElementById('arquivoJSON').click()">Carregar Dados</button>
   <button type="button" onclick="salvarJSON()">Salvar Dados</button>
-  <button type="button" onclick="salvarExcel()">Gerar Excel</button>
   <button type="button" onclick="gerarPDF()">Gerar Reserva</button>    
         </form>
     </div>
@@ -947,8 +866,8 @@ async function gerarPDF() {
 
  // Salvar JSON
 
-function salvarJSON() {  
-  const dadosReserva = {  
+function salvarJSON() {
+    const dadosReserva = {
         nomeHospede: document.getElementById('nomeHospede').value,
         nascimentoHospede: document.getElementById('nascimentoHospede').value,
         cpfHospede: document.getElementById('cpfHospede').value,
@@ -970,18 +889,18 @@ function salvarJSON() {
         taxaLimpeza: document.getElementById('taxaLimpeza').value,
         desconto: document.getElementById('desconto').value,
         total: document.getElementById('valorTotal').value,
-        formaPagamento: document.querySelector('input[name="pagamento"]:checked').value,
         numParcelas: document.getElementById('numParcelas').value,
         valorParcela: document.getElementById('valorParcela').value
     };
-  
-  const json = JSON.stringify(dadosReserva);  
-  const blob = new Blob([json], { type: 'application/json' });  
-  const url = URL.createObjectURL(blob);  
-  const a = document.createElement('a');  
-  a.href = url;  
-  a.download = 'reserva.json';  
-  a.click();  
+
+    const json = JSON.stringify(dadosReserva, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'reserva.json';
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 
@@ -1030,61 +949,6 @@ function carregarJSON() {
     reader.readAsText(file);
 }
 
-
-// Salvar XLSX (Planilha Excel)
-
-function salvarExcel() {
-            const dadosReserva = {
-                nomeHospede: document.getElementById('nomeHospede').value,
-                nascimentoHospede: document.getElementById('nascimentoHospede').value,
-                cpfHospede: document.getElementById('cpfHospede').value,
-                enderecoHospede: document.getElementById('enderecoHospede').value,
-                complementoHospede: document.getElementById('complementoHospede').value,
-                cepHospede: document.getElementById('cepHospede').value,
-                bairroHospede: document.getElementById('bairroHospede').value,
-                cidadeHospede: document.getElementById('cidadeHospede').value,
-                estadoHospede: document.getElementById('estadoHospede').value,
-                paisHospede: document.getElementById('paisHospede').value,
-                telefoneHospede: document.getElementById('telefoneHospede').value,
-                emailHospede: document.getElementById('emailHospede').value,
-                checkin: document.getElementById('checkin').value,
-                checkout: document.getElementById('checkout').value,
-                numNoites: document.getElementById('numNoites').value,
-                numHospedes: document.getElementById('hospedes').value,
-                numCriancas: document.getElementById('criancas').value,
-                valorDiaria: document.getElementById('valorDiaria').value,
-                taxaLimpeza: document.getElementById('taxaLimpeza').value,
-                desconto: document.getElementById('desconto').value,
-                total: document.getElementById('valorTotal').value,
-                formaPagamento: document.querySelector('input[name="pagamento"]:checked').value,
-                numParcelas: document.getElementById('numParcelas').value,
-                valorParcela: document.getElementById('valorParcela').value
-            };
-
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet([dadosReserva]);
-            XLSX.utils.book_append_sheet(wb, ws, "Reserva");
-
-            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-
-            const blob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'reserva.xlsx';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            function s2ab(s) {
-                const buf = new ArrayBuffer(s.length);
-                const view = new Uint8Array(buf);
-                for (let i = 0; i < s.length; i++) {
-                    view[i] = s.charCodeAt(i) & 0xFF;
-                }
-                return buf;
-            }
-        }
 
 </script>
 
