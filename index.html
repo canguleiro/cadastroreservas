@@ -476,61 +476,18 @@ margin-top: 20px;
 
 <!-- Forma de Pagamento -->
 
-<div class="section-title">FORMA DE PAGAMENTO</div>
+<div class="section-title">PAGAMENTO</div>
 
-<div class="form-group-pgto-check">
-<label for="avista">À VISTA</label>
-    <input type="radio" id="avista" name="pagamento" value="avista" onclick="toggleInputs(false)">
-<label for="avista" class="label-inferior">Pix</label>  
-</div>
-
-<div class="form-group-pgto-check">
-<label for="aprazo">À PRAZO</label>
-    <input type="radio" id="aprazo" name="pagamento" value="aprazo" onclick="toggleInputs(true)">
-<label for="avista" class="label-inferior">Pix/Mês</label>
-    
-</div>
 <div class="form-group-pgto">
-    <label for="numParcelas">NÚMERO DE PARCELAS:</label>
-    <input type="number" id="numParcelas" name="numParcelas" min="1" max="12" value="1" class="styled-input" oninput="calcularValorParcela()" onkeypress="return false;" disabled>
+  <label for="numParcelas">Nº DE PARCELAS:</label>
+  <input type="number" id="numParcelas" name="numParcelas" min="1" max="12" value="1" class="styled-input" oninput="calcularValorParcela()">
 </div>
 
 <div class="form-group-pgto">
-    <label for="valorParcela">VALOR DA PARCELA (R$):</label>
-    <input type="text" id="valorParcela" name="valorParcela" class="styled-input" readonly>
+  <label for="valorParcela">VALOR DA PARCELA (R$):</label>
+  <input type="text" id="valorParcela" name="valorParcela" class="styled-input" readonly>
 </div>
 
-<div class="moldura">
-  <div class="label-inferior-pgto">*A reserva só será efetivada após confirmação do pagamento conforme condição acordada*</div>
-</div>
-
-
-
-<!-- Regras da Locação -->
-
-<div class="section-title">TERMOS & CONDIÇÕES</div>
-
-<button class="accordion">Política da Casa</button>
-    <div class="panel">
-        <p class="panel-content">+ Estritamente proibido som alto e barulho excessivo;</p>
-        <p class="panel-content">+ Não são permitidas festas ou eventos;</p>
-        <p class="panel-content">+ Não ultrapassar o limite de hóspedes acordado;</p>
-        <p class="panel-content">+ Troca de enxoval ou peça(s) extra(s) serão cobradas;</p>
-        <p class="panel-content">+ Faxina(s) extra(s) são de responsabilidade do hóspede;</p>
-        <p class="panel-content">+ Não repomos material de limpeza e higiene pessoal;</p>
-        <p class="panel-content">+ Devolver imóvel com louça lavada e lixo recolhido;</p>
-        <p class="panel-content">+ Preservar a higiene e a conservação do imóvel e seus bens.</p>
-     </div>
-    
-<button class="accordion">Cobertura de Danos</button>
-    <div class="panel">
-        <p class="panel-content">O hóspede será responsável pelo ressarcimento monetário em eventuais perdas e/ou danos ao imóvel ou seus bens. Para tanto, será considerado o valor de mercado para a cobrança e cobertura do patrimônio.</p>
-    </div>
-    
-<button class="accordion">Política de Cancelamento</button>
-    <div class="panel">
-        <p class="panel-content">Não haverá reembolso do pagamento já antecipado para cancelamento solicitado pelo hóspede com 15 dias ou menos de antecedência do início da locação (à excessão de restrições impostas nos entes federativos por motivos de força maior).</p>
-    </div>
 
 <!-- Botões de Ações -->
 <div class="botoes-acoes">
@@ -541,7 +498,6 @@ margin-top: 20px;
   <button type="button" onclick="gerarPDF()">Gerar Reserva</button>    
         </form>
     </div>
-
 
 
 
@@ -832,6 +788,8 @@ function atualizarValorTotal() {
     } else {
         valorTotal.value = '0,00';
     }
+
+    calcularValorParcela();
 }
 
 
@@ -844,70 +802,30 @@ document.getElementById('taxaLimpeza').addEventListener('onchange', atualizarVal
   
 // Chama a função ao carregar a página  
 atualizarValorTotal();
-
+calcularValorParcela();
 document.getElementById('taxaLimpeza').readOnly = true;
 
 
-// Forma de Pagamento 
-
-function toggleInputs(enable) {
-  const numParcelasInput = document.getElementById('numParcelas');
-  const valorParcelaInput = document.getElementById('valorParcela');
-
-  numParcelasInput.disabled = !enable;
-  if (enable) {
-    numParcelasInput.value = 1;
-    calcularValorParcela();
-    numParcelasInput.addEventListener('keydown', function(event) {
-      event.preventDefault(); // Previne a entrada de texto
-    });
-  } else {
-    numParcelasInput.value = '';
-    valorParcelaInput.value = '';
-    numParcelasInput.removeEventListener('keydown', function(event) {
-      event.preventDefault(); // Previne a entrada de texto
-    });
-  }
-}
+// Função Calcular Parcela  
 
 function calcularValorParcela() {
-  const numParcelas = document.getElementById('numParcelas').value;
+  const numParcelas = parseInt(document.getElementById('numParcelas').value);
   let valorTotal = document.getElementById('valorTotal').value;
 
-  // Remove pontos e converte vírgula para ponto para garantir que seja tratado como número
   valorTotal = valorTotal.replace(/\./g, '').replace(',', '.');
   valorTotal = parseFloat(valorTotal);
 
-  const valorParcela = valorTotal / numParcelas;
-  document.getElementById('valorParcela').value = isNaN(valorParcela) ? '' : valorParcela.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (!isNaN(valorTotal) && numParcelas >= 1) {
+    const valorParcela = valorTotal / numParcelas;
+    document.getElementById('valorParcela').value = valorParcela
+      .toFixed(2)
+      .replace('.', ',')
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  } else {
+    document.getElementById('valorParcela').value = '';
+  }
 }
 
-
-// Função Accordions e checkbox 
-
-var accordions = document.getElementsByClassName("accordion");
-        for (var i = 0; i < accordions.length; i++) {
-            accordions[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.display === "block") {
-                    panel.style.display = "none";
-                } else {
-                    panel.style.display = "block";
-                }
-            });
-        }
-
-        document.getElementById('reservaForm').addEventListener('submit', function(event) {
-            var checkbox = document.getElementById('concordo');
-            var termosError = document.getElementById('termosError');
-            if (!checkbox.checked) {
-                event.preventDefault();
-                termosError.style.display = 'inline';
-            } else {
-                termosError.style.display = 'none';
-            }
-        });
 
 
 
@@ -922,8 +840,6 @@ function syncValues() {
   });
 
 
-
-
 // Função Configuração
 
 const configuracoes = {
@@ -935,42 +851,6 @@ function sincronizarTaxaLimpeza() {
     document.getElementById('taxaLimpeza').value = configuracoes.taxaLimpeza;
 }
 
-function mostrarPopup() {
-    document.getElementById('configuracaoModal').style.display = 'block';
-}
-
-function fecharPopup() {
-    document.getElementById('configuracaoModal').style.display = 'none';
-}
-
-function verificarSenha() {
-    const senha = document.getElementById('senha').value;
-    if (senha === 'casadomar@105') { // Substitua por sua senha real
-        document.getElementById('configuracaoArea').style.display = 'none';
-        document.getElementById('areaProtegida').style.display = 'block';
-    } else {
-        alert('Senha incorreta!');
-    }
-}
-
-
-// Função para carregar configurações
-function carregarConfiguracao() {
-    document.getElementById('valorDiariaConfig').value = configuracoes.valorDiaria;
-    document.getElementById('hospedeExtraConfig').value = configuracoes.hospedeExtra;
-    document.getElementById('taxaLimpezaConfig').value = configuracoes.taxaLimpeza;
-}
-
-// Função para salvar configurações
-function salvarConfiguracao() {
-    configuracoes.valorDiaria = parseFloat(document.getElementById('valorDiariaConfig').value);
-    configuracoes.hospedeExtra = parseFloat(document.getElementById('hospedeExtraConfig').value);
-    configuracoes.taxaLimpeza = parseFloat(document.getElementById('taxaLimpezaConfig').value);
-
-    document.getElementById('valorDiaria').value = configuracoes.valorDiaria;
-    document.getElementById('taxaLimpeza').value = configuracoes.taxaLimpeza;
-    alert('Configurações salvas com sucesso!');
-}
 
 // Chama a função ao alterar o valor do campo 'Hóspedes'
 document.getElementById('hospedes').addEventListener('change', atualizarDiaria);
@@ -1105,7 +985,7 @@ function salvarJSON() {
 }
 
 
- // Carregar JSON
+// Carregar JSON
 
 function carregarJSON() {
     const input = document.getElementById('arquivoJSON');
@@ -1114,7 +994,7 @@ function carregarJSON() {
 
     reader.onload = function(event) {
         const json = event.target.result;
-        const dadosReserva = JSON.parse(json); // Corrigir aqui: Parse o JSON
+        const dadosReserva = JSON.parse(json);
 
         document.getElementById('nomeHospede').value = dadosReserva.nomeHospede;
         document.getElementById('nascimentoHospede').value = dadosReserva.nascimentoHospede;
@@ -1137,9 +1017,14 @@ function carregarJSON() {
         document.getElementById('taxaLimpeza').value = dadosReserva.taxaLimpeza;
         document.getElementById('desconto').value = dadosReserva.desconto;
         document.getElementById('valorTotal').value = dadosReserva.total;
-        document.querySelector(`input[name="pagamento"][value="${dadosReserva.formaPagamento}"]`).checked = true;
         document.getElementById('numParcelas').value = dadosReserva.numParcelas;
-        document.getElementById('valorParcela').value = dadosReserva.valorParcela;
+
+        // Valor da parcela: usa o do JSON se existir, senão calcula automaticamente
+        if (dadosReserva.valorParcela) {
+            document.getElementById('valorParcela').value = dadosReserva.valorParcela;
+        } else {
+            calcularValorParcela();
+        }
     };
 
     reader.readAsText(file);
@@ -1200,7 +1085,6 @@ function salvarExcel() {
                 return buf;
             }
         }
-
 
 </script>
 
