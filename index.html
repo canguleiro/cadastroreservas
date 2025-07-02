@@ -849,8 +849,6 @@ async function gerarPDF() {
   
   page.drawText(numParcelas, { x: 30, y: 383, ...estilo });
   page.drawText("R$ " + valorParcela, { x: 285, y: 383, ...estilo });
-  const numeroSolicitacao = document.getElementById("numeroSolicitacao").value;
-  page.drawText(numeroSolicitacao, { x: 540, y: 810, ...estilo });
 
 
   // Gera e baixa o PDF
