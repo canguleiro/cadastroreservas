@@ -300,8 +300,8 @@ input, select {
            </div>
 
            <div class="form-group45">
-                <label for="localizacaoHospede">CIDADE/UF/PAÍS*</label>
-                <input type="text" id="localizacaoHospede" name="localizacaoHospede">
+                <label for="cidadeHospede">CIDADE/UF/PAÍS*</label>
+                <input type="text" id="cidadeHospede" name="cidadeHospede">
             </div>
 
 
@@ -795,7 +795,7 @@ async function gerarPDF() {
   const telefone = document.getElementById("telefoneHospede").value;
   const endereco = document.getElementById("enderecoHospede").value;
   const cep = document.getElementById("cepHospede").value;
-  const localizacao = document.getElementById("localizacaoHospede").value;
+  const cidade = document.getElementById("cidadeHospede").value;
   const email = document.getElementById("emailHospede").value;
 
   const checkin = document.getElementById("checkin").value;
@@ -826,7 +826,7 @@ async function gerarPDF() {
   page.drawText(telefone, { x: 285, y: 666, ...estilo });
   page.drawText(endereco, { x: 30, y: 630, ...estilo });
   page.drawText(cep, { x: 30, y: 610, ...estilo });
-  page.drawText(localizacao, { x: 285, y: 610, ...estilo });
+  page.drawText(cidade, { x: 285, y: 610, ...estilo });
   page.drawText(email, { x: 285, y: 630, ...estilo });
   
   page.drawText(checkin, { x: 30, y: 545, ...estilo });
@@ -865,7 +865,7 @@ function salvarJSON() {
         cpfHospede: document.getElementById('cpfHospede').value,
         enderecoHospede: document.getElementById('enderecoHospede').value,
         cepHospede: document.getElementById('cepHospede').value,
-        localizacaoHospede: document.getElementById('localizacaoHospede').value,
+        cidadeHospede: document.getElementById('cidadeHospede').value,
         telefoneHospede: document.getElementById('telefoneHospede').value,
         emailHospede: document.getElementById('emailHospede').value,
         checkin: document.getElementById('checkin').value,
@@ -908,7 +908,7 @@ function carregarJSON() {
         document.getElementById('cpfHospede').value = dadosReserva.cpfHospede;
         document.getElementById('enderecoHospede').value = dadosReserva.enderecoHospede;
         document.getElementById('cepHospede').value = dadosReserva.cepHospede;
-        document.getElementById('localizacaoHospede').value = dadosReserva.localizacaoHospede;
+        document.getElementById('cidadeHospede').value = dadosReserva.cidadeHospede;
         document.getElementById('telefoneHospede').value = dadosReserva.telefoneHospede;
         document.getElementById('emailHospede').value = dadosReserva.emailHospede;
         document.getElementById('checkin').value = dadosReserva.checkin;
