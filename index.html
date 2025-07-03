@@ -789,8 +789,6 @@ async function gerarPDF() {
 
   // Coleta dados do formulário
 
-  const numeroSolicitacao = document.getElementById("numeroSolicitacao").value;
-
   const nome = document.getElementById("nomeHospede").value;
   const nascimento = document.getElementById("nascimentoHospede").value;
   const cpf = document.getElementById("cpfHospede").value;
@@ -821,8 +819,6 @@ async function gerarPDF() {
   };
 
   // Preenchimento dos dados no PDF (coordenadas ajustadas para o modelo)
-
-  page.drawText(numeroSolicitacao, { x: 540, y: 810, ...estilo });
 
   page.drawText(nome, { x: 30, y: 705, ...estilo });
   page.drawText(nascimento, { x: 285, y: 705, ...estilo });
