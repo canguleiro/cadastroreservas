@@ -184,6 +184,10 @@ input, select {
             width: calc(60% - 20px); /* A largura será x% menos x pixels */
         }
 
+        .form-group80 {
+            width: calc(80% - 10px); /* A largura será x% menos x pixels */
+        }
+
         .form-group.full-width {
             width: 100%;
         }
@@ -284,49 +288,30 @@ input, select {
                 <span id="cpfError" class="error-message">CPF inválido</span>
             </div>
 
-            <div class="form-group60">
-                <label for="enderecoHospede">ENDEREÇO*</label>
+            <div class="form-group80">
+                <label for="enderecoHospede">ENDEREÇO* (logradouro, número, bairro, complemento)</label>
                 <input type="text" id="enderecoHospede" name="enderecoHospede">
             </div>
 
-            <div class="form-group20">
-                <label for="complementoHospede">COMPLEMENTO</label>
-                <input type="text" id="complementoHospede" name="complementoHospede">
-            </div>
-
- <div class="form-group20">
+          <div class="form-group20">
                <label for="cepHospede">CEP*</label>
                <input type="text" id="cepHospede" name="cepHospede" placeholder="00000-000" onfocus="this.placeholder = ''" oninput="formatarCEP(this)" onblur="validarCEP(this)" class="styled-input">
                <span id="cepError" class="error-message">CEP inválido</span>
            </div>
 
-            <div class="form-group30">
-                <label for="bairroHospede">BAIRRO*</label>
-                <input type="text" id="bairroHospede" name="bairroHospede">
-            </div>
-         
-           <div class="form-group30">
-                <label for="cidadeHospede">CIDADE*</label>
-                <input type="text" id="cidadeHospede" name="cidadeHospede">
+           <div class="form-group45">
+                <label for="localizacaoHospede">CIDADE/UF/PAÍS*</label>
+                <input type="text" id="localizacaoHospede" name="localizacaoHospede">
             </div>
 
-            <div class="form-group30">
-                <label for="estadoHospede">ESTADO*</label>
-                <input type="text" id="estadoHospede" name="estadoHospede">
-            </div>
-
-            <div class="form-group30">
-                <label for="paisHospede">PAÍS*</label>
-                <input type="text" id="paisHospede" name="paisHospede">
-            </div>
 
             <div class="form-group20">
                <label for="telefoneHospede">TELEFONE*</label>
-               <input type="text" id="telefoneHospede" name="telefoneHospede" placeholder="(00) 00000-0000" onfocus="this.placeholder = ''"  oninput="formatarTelefone(this)" onblur="validarTelefone(this)" class="styled-input">
+               <input type="text" id="telefoneHospede" name="telefoneHospede" placeholder="(00) 00000-0000" onfocus="this.placeholder = ''"  oninput="formatarTelefone(this)"                    onblur="validarTelefone(this)" class="styled-input">
                <span id="telefoneError" class="error-message">Telefone inválido</span>
             </div> 
 
-            <div class="form-group45">
+            <div class="form-group30">
               <label for="emailHospede">E-MAIL*</label>
              <input type="email" id="emailHospede" name="emailHospede" placeholder="nome@exemplo.com" onfocus="this.placeholder = ''" onblur="validarEmail(this)" class="styled-input">
              <span id="emailError" class="error-message">E-mail inválido</span>
@@ -803,16 +788,16 @@ async function gerarPDF() {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
   // Coleta dados do formulário
+
+  const numeroSolicitacao = document.getElementById("numeroSolicitacao").value;
+
   const nome = document.getElementById("nomeHospede").value;
   const nascimento = document.getElementById("nascimentoHospede").value;
   const cpf = document.getElementById("cpfHospede").value;
   const telefone = document.getElementById("telefoneHospede").value;
   const endereco = document.getElementById("enderecoHospede").value;
   const cep = document.getElementById("cepHospede").value;
-  const bairro = document.getElementById("bairroHospede").value;
-  const cidade = document.getElementById("cidadeHospede").value;
-  const estado = document.getElementById("estadoHospede").value;
-  const pais = document.getElementById("paisHospede").value;
+  const localizacao = document.getElementById("localizacaoHospede").value;
   const email = document.getElementById("emailHospede").value;
 
   const checkin = document.getElementById("checkin").value;
@@ -836,16 +821,16 @@ async function gerarPDF() {
   };
 
   // Preenchimento dos dados no PDF (coordenadas ajustadas para o modelo)
+
+  page.drawText(numeroSolicitacao, { x: 540, y: 810, ...estilo });
+
   page.drawText(nome, { x: 30, y: 705, ...estilo });
   page.drawText(nascimento, { x: 285, y: 705, ...estilo });
   page.drawText(cpf, { x: 30, y: 666, ...estilo });
   page.drawText(telefone, { x: 285, y: 666, ...estilo });
   page.drawText(endereco, { x: 30, y: 630, ...estilo });
-  page.drawText(cep, { x: 30, y: 630, ...estilo });
-  page.drawText(bairro, { x: 30, y: 630, ...estilo });
-  page.drawText(cidade, { x: 30, y: 630, ...estilo });
-  page.drawText(estado, { x: 30, y: 630, ...estilo });
-  page.drawText(pais, { x: 30, y: 630, ...estilo });
+  page.drawText(cep, { x: 30, y: 610, ...estilo });
+  page.drawText(localizacao, { x: 285, y: 610, ...estilo });
   page.drawText(email, { x: 285, y: 630, ...estilo });
   
   page.drawText(checkin, { x: 30, y: 545, ...estilo });
@@ -883,12 +868,8 @@ function salvarJSON() {
         nascimentoHospede: document.getElementById('nascimentoHospede').value,
         cpfHospede: document.getElementById('cpfHospede').value,
         enderecoHospede: document.getElementById('enderecoHospede').value,
-        complementoHospede: document.getElementById('complementoHospede').value,
         cepHospede: document.getElementById('cepHospede').value,
-        bairroHospede: document.getElementById('bairroHospede').value,
-        cidadeHospede: document.getElementById('cidadeHospede').value,
-        estadoHospede: document.getElementById('estadoHospede').value,
-        paisHospede: document.getElementById('paisHospede').value,
+        localizacaoHospede: document.getElementById('localizacaoHospede').value,
         telefoneHospede: document.getElementById('telefoneHospede').value,
         emailHospede: document.getElementById('emailHospede').value,
         checkin: document.getElementById('checkin').value,
@@ -930,12 +911,8 @@ function carregarJSON() {
         document.getElementById('nascimentoHospede').value = dadosReserva.nascimentoHospede;
         document.getElementById('cpfHospede').value = dadosReserva.cpfHospede;
         document.getElementById('enderecoHospede').value = dadosReserva.enderecoHospede;
-        document.getElementById('complementoHospede').value = dadosReserva.complementoHospede;
         document.getElementById('cepHospede').value = dadosReserva.cepHospede;
-        document.getElementById('bairroHospede').value = dadosReserva.bairroHospede;
-        document.getElementById('cidadeHospede').value = dadosReserva.cidadeHospede;
-        document.getElementById('estadoHospede').value = dadosReserva.estadoHospede;
-        document.getElementById('paisHospede').value = dadosReserva.paisHospede;
+        document.getElementById('localizacaoHospede').value = dadosReserva.localizacaoHospede;
         document.getElementById('telefoneHospede').value = dadosReserva.telefoneHospede;
         document.getElementById('emailHospede').value = dadosReserva.emailHospede;
         document.getElementById('checkin').value = dadosReserva.checkin;
