@@ -272,7 +272,7 @@ input, select {
             </div>
             
            <div class="form-group20">
-                <label for="nascimentoHospede">DATA DE NASCIMENTO*</label>
+                <label for="nascimentoHospede">NASCIMENTO*</label>
                 <input type="text" id="nascimentoHospede" name="nascimentoHospede" class="styled-input" placeholder="dd/mm/aaaa" onfocus="this.placeholder = ''" oninput="formatarData(this)" onblur="validarData(this)">
                 <span id="dataError" class="error-message">Data inválida</span>
            </div>
@@ -808,6 +808,11 @@ async function gerarPDF() {
   const cpf = document.getElementById("cpfHospede").value;
   const telefone = document.getElementById("telefoneHospede").value;
   const endereco = document.getElementById("enderecoHospede").value;
+  const cep = document.getElementById("cepHospede").value;
+  const bairro = document.getElementById("bairroHospede").value;
+  const cidade = document.getElementById("cidadeHospede").value;
+  const estado = document.getElementById("estadoHospede").value;
+  const pais = document.getElementById("paisHospede").value;
   const email = document.getElementById("emailHospede").value;
 
   const checkin = document.getElementById("checkin").value;
@@ -836,6 +841,11 @@ async function gerarPDF() {
   page.drawText(cpf, { x: 30, y: 666, ...estilo });
   page.drawText(telefone, { x: 285, y: 666, ...estilo });
   page.drawText(endereco, { x: 30, y: 630, ...estilo });
+  page.drawText(cep, { x: 30, y: 630, ...estilo });
+  page.drawText(bairro, { x: 30, y: 630, ...estilo });
+  page.drawText(cidade, { x: 30, y: 630, ...estilo });
+  page.drawText(estado, { x: 30, y: 630, ...estilo });
+  page.drawText(pais, { x: 30, y: 630, ...estilo });
   page.drawText(email, { x: 285, y: 630, ...estilo });
   
   page.drawText(checkin, { x: 30, y: 545, ...estilo });
