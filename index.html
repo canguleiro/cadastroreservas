@@ -373,9 +373,13 @@ input, select {
                 <label for="desconto" class="label-inferior">*não incide sobre a Taxa de Limpeza</label> 
             </div>
 
-            <div class="form-group30">
-  <label for="total">TOTAL (R$)</label>
+<div class="form-group30" style="position: relative;">
+  <label for="valorTotal">TOTAL (R$)</label>
   <input type="text" id="valorTotal" name="valorTotal" value="0,00" class="styled-input-valortotal" readonly>
+  <span id="toggleTotal" onclick="alternarCampo('valorTotal', 'toggleTotal')" 
+        style="position:absolute; top: 25px; right: 10px; cursor: pointer;">
+    <i class="fas fa-lock" style="color:#004080; font-size: 15px;"></i>
+  </span>
 </div>
 
 
@@ -392,11 +396,14 @@ input, select {
 <div class="form-group30">
   <label for="valorParcela">VALOR DA PARCELA (R$):</label>
   <input type="text" id="valorParcela" name="valorParcela" class="styled-input" readonly>
+
 </div>
 
 <div class="form-group30">
-  <label for="valorParcela">ALTA ESTAÇÃO (%):</label>
-  <input type="text" id="valorParcela" name="valorParcela" class="styled-input" readonly>
+<label for="altaEstacao">ALTA ESTAÇÃO (%)</label>
+<input type="number" id="altaEstacao" name="altaEstacao" class="styled-input" placeholder="exemplo: 35">
+<label for="altaEstacao" class="label-inferior">*dezembro/janeiro/fevereiro</label> 
+
 </div>
 
 
@@ -578,23 +585,6 @@ function calcularNoites() {  
   }   
 }  
 
-// Função para atualizar o valor da diária com base no número de hóspedes
-
-function atualizarDiaria() {
-    const hospedes = parseInt(document.getElementById('hospedes').value, 10);
-    const diariaBase = configuracoes.valorDiaria;
-    const diariaElement = document.getElementById('valorDiaria');
-
-    if (hospedes > 6 && hospedes <= 12) {
-        const valorHospedeExtra = diariaBase / 6;
-        const acrescimo = (hospedes - 6) * valorHospedeExtra;
-        diariaElement.value = (diariaBase + acrescimo).toFixed(2);
-    } else {
-        diariaElement.value = diariaBase.toFixed(2);
-    }
-
-    atualizarValorTotal();
-}
 
 
 // Função para bloquear/desbloquear campos
@@ -681,6 +671,11 @@ function formatarValorTotal(valor) {
 // Função para atualizar o valor total 
  
 function atualizarValorTotal() {
+
+const campoTotal = document.getElementById('valorTotal');
+if (!campoTotal.readOnly) {
+    return; // Se estiver desbloqueado, não sobrescreve o valor manual
+}
     const noites = parseInt(document.getElementById('numNoites').value);
     const diaria = parseFloat(document.getElementById('valorDiaria').value);
     const desconto = parseFloat(document.getElementById('desconto').value);
@@ -739,6 +734,30 @@ function calcularValorParcela() {
 }
 
 
+function atualizarDiariaComAltaEstacao() {
+    const hospedes = parseInt(document.getElementById('hospedes').value, 10);
+    const diariaBase = configuracoes.valorDiaria;
+    const diariaElement = document.getElementById('valorDiaria');
+    const altaEstacao = parseFloat(document.getElementById('altaEstacao').value);
+
+    let diariaCalculada = diariaBase;
+
+    // Adiciona valor por hóspede extra (se houver)
+    if (hospedes > 6 && hospedes <= 12) {
+        const valorHospedeExtra = diariaBase / 6;
+        diariaCalculada += (hospedes - 6) * valorHospedeExtra;
+    }
+
+    // Aplica acréscimo de alta estação
+    if (!isNaN(altaEstacao) && altaEstacao > 0) {
+        diariaCalculada *= (1 + altaEstacao / 100);
+    }
+
+    diariaElement.value = diariaCalculada.toFixed(2);
+
+    atualizarValorTotal(); // Atualiza total e parcelas
+}
+
 
 
 function syncValues() {
@@ -765,10 +784,10 @@ function sincronizarTaxaLimpeza() {
 
 
 // Chama a função ao alterar o valor do campo 'Hóspedes'
-document.getElementById('hospedes').addEventListener('change', atualizarDiaria);
+document.getElementById('hospedes').addEventListener('change', atualizarDiariaComAltaEstacao);
+document.getElementById('altaEstacao').addEventListener('input', atualizarDiariaComAltaEstacao);
 
-// Chama a função ao carregar a página
-atualizarDiaria();
+
 
 
  // Gerar PDF
