@@ -804,7 +804,8 @@ async function gerarPDF() {
   const cep = document.getElementById("cepHospede").value;
   const cidade = document.getElementById("cidadeHospede").value;
   const email = document.getElementById("emailHospede").value;
-
+  
+  const numeroReserva = document.getElementById("dataAtual").textContent;
   const checkin = document.getElementById("checkin").value;
   const checkout = document.getElementById("checkout").value;
 
@@ -847,9 +848,7 @@ const checkoutFormatado = formatarDataParaPDF(checkout);
   page.drawText(cep, { x: 32, y: 593, ...estilo });
   page.drawText(email, { x: 371, y: 622, ...estilo });
 
-// RESERVA NÚMERO
-  page.drawText(checkinFormatado, { x: 385, y: 561, ...estilo });
-    
+  page.drawText(numeroReserva, { x: 385, y: 561, ...estilo }); // Número da reserva
   page.drawText(checkinFormatado, { x: 32, y: 518, ...estilo });
   page.drawText(checkoutFormatado, { x: 371, y: 518, ...estilo });
   page.drawText(numHospedes, { x: 32, y: 480, ...estilo });
