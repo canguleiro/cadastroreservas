@@ -787,13 +787,14 @@ async function gerarPDF() {
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-    // Coleta dados do formulário
+  // Coleta dados do formulário
 
   const nome = document.getElementById("nomeHospede").value;
   const nascimento = document.getElementById("nascimentoHospede").value;
   const cpf = document.getElementById("cpfHospede").value;
   const telefone = document.getElementById("telefoneHospede").value;
   const endereco = document.getElementById("enderecoHospede").value;
+  const cep = document.getElementById("desconto").value;
   const cidade = document.getElementById("cidadeHospede").value;
   const email = document.getElementById("emailHospede").value;
 
@@ -804,8 +805,8 @@ async function gerarPDF() {
   const numCriancas = document.getElementById("criancas").value;
 
   const valorDiaria = document.getElementById("valorDiaria").value;
-  const desconto = document.getElementById("desconto").value;
   const taxaLimpeza = document.getElementById("taxaLimpeza").value;
+  const desconto = document.getElementById("desconto").value;
   const total = document.getElementById("valorTotal").value;
   const formaPagamento = document.querySelector('input[name="pagamento"]:checked')?.value || "".value;
   const numParcelas = document.getElementById("numParcelas").value;
@@ -826,6 +827,7 @@ async function gerarPDF() {
   page.drawText(telefone, { x: 371, y: 657, ...estilo });
   page.drawText(endereco, { x: 32, y: 622, ...estilo });
   page.drawText(cidade, { x: 32, y: 607, ...estilo });
+  page.drawText(cep, { x: 32, y: 593, ...estilo });
   page.drawText(email, { x: 371, y: 622, ...estilo });
   
   page.drawText(checkin, { x: 32, y: 518, ...estilo });
@@ -840,6 +842,7 @@ async function gerarPDF() {
   
   page.drawText(numParcelas, { x: 32, y: 313, ...estilo });
   page.drawText("R$ " + valorParcela, { x: 371, y: 313, ...estilo });
+
 
 
   // Gera e baixa o PDF
