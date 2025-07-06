@@ -836,10 +836,10 @@ async function gerarPDF() {
   page.drawText(numNoites, { x: 32, y: 444, ...estilo });
   page.drawText("R$ " + valorDiaria, { x: 371, y: 444, ...estilo });
   page.drawText("R$ " + taxaLimpeza, { x: 32, y: 406, ...estilo });
-  page.drawText("R$ " + total, { x: 285, y: 406, ...estilo });
+  page.drawText("R$ " + total, { x: 371, y: 406, ...estilo });
   
-  page.drawText(numParcelas, { x: 32, y: 383, ...estilo });
-  page.drawText("R$ " + valorParcela, { x: 371, y: 383, ...estilo });
+  page.drawText(numParcelas, { x: 32, y: 313, ...estilo });
+  page.drawText("R$ " + valorParcela, { x: 371, y: 313, ...estilo });
 
 
   // Gera e baixa o PDF
