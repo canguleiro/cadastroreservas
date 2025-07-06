@@ -829,7 +829,10 @@ async function gerarPDF() {
   page.drawText(cidade, { x: 32, y: 607, ...estilo });
   page.drawText(cep, { x: 32, y: 593, ...estilo });
   page.drawText(email, { x: 371, y: 622, ...estilo });
-  
+
+// RESERVA NÚMERO
+  page.drawText(checkin, { x: 385, y: 565, ...estilo });
+    
   page.drawText(checkin, { x: 32, y: 518, ...estilo });
   page.drawText(checkout, { x: 371, y: 518, ...estilo });
   page.drawText(numHospedes, { x: 32, y: 480, ...estilo });
