@@ -26,7 +26,7 @@
 .container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 30px;
+    padding: 20px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -50,7 +50,7 @@
   align-items: center; /* Alinhar verticalmente */
   justify-content: center; /* Alinhar horizontalmente */  border: 2px solid #004080;
   border-radius: 5px;
-  padding: 10px;
+  padding: 5px 10px;
   width: 100%;
 }
 
@@ -60,7 +60,7 @@
 
 .imagem {
   width: auto;
-  height: 70px;
+  height: 45px;
 }
 
 
@@ -219,34 +219,31 @@ input, select {
 
 /* BOTÕES DE AÇÃO */
 
-       button {
-            background-color: #e6e6e6;
-            color: #212121;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        button:hover {
-            background-color: #cccccc;
-        }
-
 .botoes-acoes {
-  margin-top: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
   gap: 10px;
+  width: 100%;
+  margin-top: 20px;
 }
 
 .botoes-acoes button {
-  margin: 5px;
+  flex: 1; /* cada botão ocupa espaço igual */
+  padding: 12px 0;
+  font-weight: bold;
+  background-color: #e6e6e6;
+  color: #212121;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
+.botoes-acoes button:hover {
+  background-color: #cccccc;
+}
 
-     
-    </style>
+</style>
 </head>
 
 
@@ -261,12 +258,6 @@ input, select {
 
 <form id="reservaForm" enctype="multipart/form-data">
 
-<!-- Número da Solicitação/Data -->
-
-<div class="section-diviser">
- <span>RESERVA N°: <span id="dataAtual"></span></span>
-    </div>
-        
 <!-- Dados do Hóspede -->
         <div class="section-title">DADOS DO HÓSPEDE</div>
    
@@ -320,7 +311,10 @@ input, select {
           
 <!-- Dados da Locação -->
 
-            <div class="section-title">DADOS DA LOCAÇÃO</div>
+<div class="section-title">
+  DADOS DA LOCAÇÃO | N° <span id="dataAtual" style="font-weight: normal;"></span>
+</div>
+
             <div class="form-group30">
                 <label for="checkin">CHECK-IN</label>
                 <input type="date" id="checkin" name="checkin" class="styled-input">
@@ -412,9 +406,9 @@ input, select {
   <input type="file" id="arquivoJSON" accept=".json" style="display: none;" onchange="carregarJSON()" />
   <button type="button" onclick="document.getElementById('arquivoJSON').click()">Carregar Dados</button>
   <button type="button" onclick="salvarJSON()">Salvar Dados</button>
-  <button type="button" onclick="gerarPDF()">Gerar Reserva</button>    
-        </form>
-    </div>
+  <button type="button" onclick="gerarPDF()">Gerar Reserva</button>
+</form>
+</div>
 
 
 
