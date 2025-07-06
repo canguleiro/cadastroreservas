@@ -830,13 +830,13 @@ async function gerarPDF() {
   page.drawText(email, { x: 371, y: 622, ...estilo });
   
   page.drawText(checkin, { x: 32, y: 518, ...estilo });
-  page.drawText(checkout, { x: 371, y: 545, ...estilo });
+  page.drawText(checkout, { x: 371, y: 518, ...estilo });
   page.drawText(numHospedes, { x: 32, y: 480, ...estilo });
-  page.drawText(numCriancas, { x: 371, y: 505, ...estilo });
+  page.drawText(numCriancas, { x: 371, y: 480, ...estilo });
   page.drawText(numNoites, { x: 32, y: 444, ...estilo });
-  page.drawText("R$ " + valorDiaria, { x: 371, y: 468, ...estilo });
+  page.drawText("R$ " + valorDiaria, { x: 371, y: 444, ...estilo });
   page.drawText("R$ " + taxaLimpeza, { x: 32, y: 406, ...estilo });
-  page.drawText("R$ " + total, { x: 285, y: 432, ...estilo });
+  page.drawText("R$ " + total, { x: 285, y: 406, ...estilo });
   
   page.drawText(numParcelas, { x: 32, y: 383, ...estilo });
   page.drawText("R$ " + valorParcela, { x: 371, y: 383, ...estilo });
