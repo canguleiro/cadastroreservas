@@ -787,14 +787,14 @@ async function gerarPDF() {
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-  // Coleta dados do formulário
+   // Coleta dados do formulário
 
   const nome = document.getElementById("nomeHospede").value;
   const nascimento = document.getElementById("nascimentoHospede").value;
   const cpf = document.getElementById("cpfHospede").value;
   const telefone = document.getElementById("telefoneHospede").value;
   const endereco = document.getElementById("enderecoHospede").value;
-  const cep = document.getElementById("desconto").value;
+  const cep = document.getElementById("cepHospede").value;
   const cidade = document.getElementById("cidadeHospede").value;
   const email = document.getElementById("emailHospede").value;
 
