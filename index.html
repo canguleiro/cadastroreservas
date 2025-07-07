@@ -167,36 +167,14 @@ input, select {
 
  /* Dimensões Caixas de Texto - Grupos de Formulário */            
          
-        .form-group20 {
-            width: 20%
-        }
+.form-group40 { width: calc(40% - 8px); }
+.form-group30 { width: calc(30% - 6px); }
+.form-group33 { width: calc(33.33% - 7px); }
+.form-group80 { width: calc(80% - 8px); }
+.form-group20 { width: calc(20% - 2px); }
+.form-group60 { width: calc(60% - 12px); }
+.form-group201 { width: calc(20% - 4px); }
 
-        .form-group25 {
-            width: calc(30% - 20px); /* A largura será x% menos x pixels */
-
-        }
-
-        .form-group30 {
-            width: calc(35% - 20px); /* A largura será x% menos x pixels */
-
-        }
-
-        .form-group35 {
-            width: calc(40% - 20px); /* A largura será x% menos x pixels */
-
-        }
-
-        .form-group40 {
-            width: calc(45% - 0px); /* A largura será x% menos x pixels */
-        }
-
-        .form-group60 {
-            width: calc(60% - 20px); /* A largura será x% menos x pixels */
-        }
-
-        .form-group80 {
-            width: calc(80% - 10px); /* A largura será x% menos x pixels */
-        }
 
         .form-group.full-width {
             width: 100%;
@@ -276,14 +254,14 @@ input, select {
                 <input type="text" id="nomeHospede" name="nomeHospede">
             </div>
             
-           <div class="form-group20">
+           <div class="form-group201">
                 <label for="nascimentoHospede">NASCIMENTO*</label>
                 <input type="text" id="nascimentoHospede" name="nascimentoHospede" class="styled-input" placeholder="dd/mm/aaaa" onfocus="this.placeholder = ''" oninput="formatarData(this)" onblur="validarData(this)">
                 <span id="dataError" class="error-message">Data inválida</span>
            </div>
 
 
-           <div class="form-group20">
+           <div class="form-group201">
                <label for="cpfHospede">CPF*</label>
                <input type="text" id="cpfHospede" name="cpfHospede" placeholder="000.000.000-00" onfocus="this.placeholder = ''" oninput="formatarCPF(this)" onblur="validarCPF(this)" class="styled-input">
                 <span id="cpfError" class="error-message">CPF inválido</span>
@@ -300,13 +278,13 @@ input, select {
                <span id="cepError" class="error-message">CEP inválido</span>
            </div>
 
-           <div class="form-group35">
+           <div class="form-group40">
                 <label for="cidadeHospede">CIDADE/UF - PAÍS*</label>
                 <input type="text" id="cidadeHospede" name="cidadeHospede">
             </div>
 
 
-            <div class="form-group25">
+            <div class="form-group30">
                <label for="telefoneHospede">TELEFONE*</label>
                <input type="text" id="telefoneHospede" name="telefoneHospede" placeholder="+55 (00) 00000-0000" onfocus="this.placeholder = ''"  oninput="formatarTelefone(this)"                    onblur="validarTelefone(this)" class="styled-input">
                <span id="telefoneError" class="error-message">Telefone inválido</span>
@@ -325,20 +303,20 @@ input, select {
   DADOS DA LOCAÇÃO | N° <span id="numeroReserva" style="font-weight: bold;"></span>
 </div>
 
-            <div class="form-group30">
+            <div class="form-group33">
                 <label for="checkin">CHECK-IN</label>
                 <input type="date" id="checkin" name="checkin" class="styled-input">
             </div>
-            <div class="form-group30">
+            <div class="form-group33">
                 <label for="checkout">CHECK-OUT</label>
                 <input type="date" id="checkout" name="checkout" disabled class="styled-input">
             </div>
-            <div class="form-group30">
+            <div class="form-group33">
                 <label for="numNoites">NOITES (mínimo 2)</label>
                 <input type="number" id="numNoites" name="numNoites" class="styled-input" readonly>
             </div>
 
-           <div class="form-group30">
+           <div class="form-group33">
     <label for="numHospedes">HÓSPEDE(S)</label>
     <input type="number" id="hospedes" name="hospedes" value="1" min="1" max="12" class="styled-input">
     <label for="numHospedes" class="label-inferior">máximo 12</label>
@@ -346,7 +324,7 @@ input, select {
 
 </div>
 
-<div class="form-group30">
+<div class="form-group33">
     <label for="numCriancas">CRIANÇA(S)</label>
     <input type="number" id="criancas" name="criancas" value="0" min="0" max="12" class="styled-input">
     <label for="criancas" class="label-inferior">até 2 anos</label>
@@ -355,7 +333,7 @@ input, select {
 </div>
 
 
-<div class="form-group30" style="position: relative;">
+<div class="form-group33" style="position: relative;">
   <label for="valorDiaria">VALOR DA DIÁRIA (R$)</label>
   <input type="number" id="valorDiaria" name="valorDiaria" value="600" class="styled-input" readonly>
   <span id="toggleDiaria" onclick="alternarCampo('valorDiaria', 'toggleDiaria')" 
@@ -366,7 +344,7 @@ input, select {
   <label for="valorDiaria" class="label-inferior">até 6 pessoas o valor é fixo</label>
 </div>
 
-<div class="form-group30" style="position: relative;">
+<div class="form-group33" style="position: relative;">
   <label for="taxaLimpeza">TAXA DE LIMPEZA (R$)</label>
   <input type="number" id="taxaLimpeza" name="taxaLimpeza" value="300" class="styled-input" readonly>
   <span id="toggleLimpeza" onclick="alternarCampo('taxaLimpeza', 'toggleLimpeza')" style="position:absolute; top: 25px; right: 10px; cursor: pointer;">
@@ -375,13 +353,13 @@ input, select {
 </div>
 
 
-            <div class="form-group30">
+            <div class="form-group33">
                 <label for="desconto">DESCONTO (%)</label>
                 <input type="number" id="desconto" name="desconto" class="styled-input">
                 <label for="desconto" class="label-inferior">*não incide sobre a Taxa de Limpeza</label> 
             </div>
 
-<div class="form-group30" style="position: relative;">
+<div class="form-group33" style="position: relative;">
   <label for="valorTotal">TOTAL (R$)</label>
   <input type="text" id="valorTotal" name="valorTotal" value="0,00" class="styled-input-valortotal" readonly>
   <span id="toggleTotal" onclick="alternarCampo('valorTotal', 'toggleTotal')" 
@@ -396,18 +374,18 @@ input, select {
 
 <div class="section-title">DADOS DE PAGAMENTO</div>
 
-<div class="form-group30">
+<div class="form-group33">
   <label for="numParcelas">NÚMERO DE PARCELAS:</label>
   <input type="number" id="numParcelas" name="numParcelas" min="1" max="12" value="1" class="styled-input" oninput="calcularValorParcela()">
 </div>
 
-<div class="form-group30">
+<div class="form-group33">
   <label for="valorParcela">VALOR DA PARCELA (R$):</label>
   <input type="text" id="valorParcela" name="valorParcela" class="styled-input" readonly>
 
 </div>
 
-<div class="form-group30">
+<div class="form-group33">
 <label for="altaEstacao">ALTA ESTAÇÃO (%)</label>
 <input type="number" id="altaEstacao" name="altaEstacao" class="styled-input" placeholder="exemplo: 35">
 <label for="altaEstacao" class="label-inferior">*dezembro/janeiro/fevereiro</label> 
