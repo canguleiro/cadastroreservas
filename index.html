@@ -41,7 +41,7 @@
 .cabecalho {
     width: 100%;
     text-align: center; /* Centraliza tudo */
-    padding: 12px;
+    padding: 10px;
     border-radius: 5px;
     background: #FFFFFF; /* Fundo sutil (opcional) */
     border: 2px solid #004080;
@@ -51,6 +51,15 @@
     color: #004080;
     font-size: 24px;
 }
+
+.numero-reserva {
+  display: inline-block;
+  font-weight: bold;
+  font-size: 16px;
+  color: #004080;
+  margin-top: 0px;
+}
+
 
 /* Estiliza o formulário para centralizar e justificar */
 
@@ -264,9 +273,11 @@ input, select {
 
     <div class="container">
 
-  <header class="cabecalho">
-        <h1 class="titulo">CADASTRO DE RESERVA</h1>
+ <header class="cabecalho">
+  <h1 class="titulo">CADASTRO DE RESERVA</h1>
+  <span id="numeroReserva" class="numero-reserva"></span>
 </header>
+
 
 
 <form id="reservaForm" enctype="multipart/form-data">
@@ -463,12 +474,13 @@ document.getElementById('criancas').addEventListener('blur', function () {
 // Atualiza o campo RESERVA N° com a data do check-in no formato ddmmaaaa
 function atualizarNumeroReserva() {
     const checkin = document.getElementById('checkin').value;
+    const reservaSpan = document.getElementById('numeroReserva');
+
     if (checkin) {
-        // checkin vem no formato yyyy-mm-dd
         const [ano, mes, dia] = checkin.split("-");
-        document.getElementById('numeroReserva').textContent = `${dia}${mes}${ano}`;
+        reservaSpan.textContent = `N° ${dia}${mes}${ano}`;
     } else {
-        document.getElementById('numeroReserva').textContent = '';
+        reservaSpan.textContent = 'N° 12345';
     }
 }
 
