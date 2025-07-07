@@ -322,7 +322,7 @@ input, select {
 <!-- Dados da Locação -->
 
 <div class="section-title">
-  DADOS DA LOCAÇÃO | N° <span id="dataAtual" style="font-weight: normal;"></span>
+  DADOS DA LOCAÇÃO | N° <span id="numeroReserva" style="font-weight: bold;"></span>
 </div>
 
             <div class="form-group30">
@@ -463,9 +463,9 @@ function atualizarNumeroReserva() {
     if (checkin) {
         // checkin vem no formato yyyy-mm-dd
         const [ano, mes, dia] = checkin.split("-");
-        document.getElementById('dataAtual').textContent = `${dia}${mes}${ano}`;
+        document.getElementById('numeroReserva').textContent = `${dia}${mes}${ano}`;
     } else {
-        document.getElementById('dataAtual').textContent = '';
+        document.getElementById('numeroReserva').textContent = '';
     }
 }
 
@@ -851,7 +851,7 @@ async function gerarPDF() {
   const cidade = document.getElementById("cidadeHospede").value;
   const email = document.getElementById("emailHospede").value;
   
-  const numeroReserva = document.getElementById("dataAtual").textContent;
+  const numeroReserva = document.getElementById("numeroReserva").textContent;
   const checkin = document.getElementById("checkin").value;
   const checkout = document.getElementById("checkout").value;
 
@@ -928,6 +928,7 @@ const checkoutFormatado = formatarDataParaPDF(checkout);
 
 function salvarJSON() {
     const dadosReserva = {
+        numeroReserva: document.getElementById('numeroReserva').textContent,
         nomeHospede: document.getElementById('nomeHospede').value,
         nascimentoHospede: document.getElementById('nascimentoHospede').value,
         cpfHospede: document.getElementById('cpfHospede').value,
@@ -971,6 +972,7 @@ function carregarJSON() {
         const json = event.target.result;
         const dadosReserva = JSON.parse(json);
 
+        document.getElementById('numeroReserva').textContent = dadosReserva.numeroReserva;
         document.getElementById('nomeHospede').value = dadosReserva.nomeHospede;
         document.getElementById('nascimentoHospede').value = dadosReserva.nascimentoHospede;
         document.getElementById('cpfHospede').value = dadosReserva.cpfHospede;
