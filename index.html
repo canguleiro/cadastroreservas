@@ -171,13 +171,23 @@ input, select {
             width: 20%
         }
 
+        .form-group25 {
+            width: calc(30% - 20px); /* A largura será x% menos x pixels */
+
+        }
+
         .form-group30 {
             width: calc(35% - 20px); /* A largura será x% menos x pixels */
 
         }
 
-        .form-group45 {
-            width: 45%;
+        .form-group35 {
+            width: calc(40% - 20px); /* A largura será x% menos x pixels */
+
+        }
+
+        .form-group40 {
+            width: calc(45% - 0px); /* A largura será x% menos x pixels */
         }
 
         .form-group60 {
@@ -230,11 +240,11 @@ input, select {
 
 .botoes-acoes button {
   flex: 1; /* cada botão ocupa espaço igual */
-  padding: 12px 0;
+  padding: 10px 0;
   font-weight: bold;
   background-color: #e6e6e6;
   color: #212121;
-  border: none;
+  border: 0px solid #004080;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -290,13 +300,13 @@ input, select {
                <span id="cepError" class="error-message">CEP inválido</span>
            </div>
 
-           <div class="form-group45">
+           <div class="form-group35">
                 <label for="cidadeHospede">CIDADE/UF - PAÍS*</label>
                 <input type="text" id="cidadeHospede" name="cidadeHospede">
             </div>
 
 
-            <div class="form-group20">
+            <div class="form-group25">
                <label for="telefoneHospede">TELEFONE*</label>
                <input type="text" id="telefoneHospede" name="telefoneHospede" placeholder="+55 (00) 00000-0000" onfocus="this.placeholder = ''"  oninput="formatarTelefone(this)"                    onblur="validarTelefone(this)" class="styled-input">
                <span id="telefoneError" class="error-message">Telefone inválido</span>
@@ -329,15 +339,19 @@ input, select {
             </div>
 
            <div class="form-group30">
-    <label for="numHospedes">HÓSPEDES</label>
+    <label for="numHospedes">HÓSPEDE(S)</label>
     <input type="number" id="hospedes" name="hospedes" value="1" min="1" max="12" class="styled-input">
     <label for="numHospedes" class="label-inferior">máximo 12</label>
+<span id="hospedesError" class="error-message">Limite ultrapassado</span>
+
 </div>
 
 <div class="form-group30">
-    <label for="numCriancas">CRIANÇA</label>
-    <input type="number" id="criancas" name="criancas" value="0" min="0" class="styled-input">
+    <label for="numCriancas">CRIANÇA(S)</label>
+    <input type="number" id="criancas" name="criancas" value="0" min="0" max="12" class="styled-input">
     <label for="criancas" class="label-inferior">até 2 anos</label>
+<span id="criancasError" class="error-message">Limite ultrapassado</span>
+
 </div>
 
 
@@ -414,12 +428,31 @@ input, select {
 
 <script>
 
-document.getElementById('hospedes').addEventListener('keypress', function(event) {
-    event.preventDefault(); // Previne a entrada de texto
+
+document.getElementById('hospedes').addEventListener('blur', function () {
+    const valor = parseInt(this.value);
+    const erro = document.getElementById('hospedesError');
+
+    if (valor > 12) {
+        erro.style.display = 'inline';
+        this.focus();
+        this.select();
+    } else {
+        erro.style.display = 'none';
+    }
 });
 
-document.getElementById('criancas').addEventListener('keypress', function(event) {
-    event.preventDefault(); // Previne a entrada de texto
+document.getElementById('criancas').addEventListener('blur', function () {
+    const valor = parseInt(this.value);
+    const erro = document.getElementById('criancasError');
+
+    if (valor > 12) {
+        erro.style.display = 'inline';
+        this.focus();
+        this.select();
+    } else {
+        erro.style.display = 'none';
+    }
 });
 
 
