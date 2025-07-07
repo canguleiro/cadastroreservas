@@ -34,35 +34,23 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center; /* Alinhar verticalmente */
-    gap: 20px; /* Espaçamento entre os elementos */
+    gap: 5px; /* Espaçamento entre os elementos */
 
 
-/* Estiliza o Título Geral */
-
-        h1 {
-            text-align: center;
-            color: #004080;
-            
-        }
-
-.titulo-e-imagem {
-  display: flex;
-  align-items: center; /* Alinhar verticalmente */
-  justify-content: center; /* Alinhar horizontalmente */  border: 2px solid #004080;
-  border-radius: 5px;
-  padding: 5px 10px;
-  width: 100%;
+/* Estilo do cabeçalho (título + imagem) */
+.cabecalho {
+    width: 100%;
+    text-align: center; /* Centraliza tudo */
+    padding: 15px;
+    border-radius: 5px;
+    background: #FFFFFF; /* Fundo sutil (opcional) */
+    border: 2px solid #004080;
 }
 
 .titulo {
-  margin-right: 40px; /* Espaço entre o texto e a imagem */
+    color: #004080;
+    font-size: 24px;
 }
-
-.imagem {
-  width: auto;
-  height: 45px;
-}
-
 
 /* Estiliza o formulário para centralizar e justificar */
 
@@ -106,10 +94,10 @@ form {
         .section-title {
             background-color: #004080;
             width: 100%;
-            padding: 5px;
+            padding: 8px;
             border-radius: 5px;
-            margin-bottom: 10px;
-            margin-top: 10px;
+            margin-bottom: 15px;
+            margin-top: 15px;
             color: #ffffff;
             font-weight: bold;
             text-align: center;
@@ -247,6 +235,7 @@ input, select {
     width: 100% !important;
   }
 
+
   .form-row {
     flex-direction: column;
     gap: 0;
@@ -264,11 +253,8 @@ input, select {
     padding: 10px 6px;
     font-size: 14px;
   }
-
-  h1.titulo {
-    font-size: 12px !important;
-  }
 }
+
 
 </style>
 </head>
@@ -278,10 +264,10 @@ input, select {
 
     <div class="container">
 
-      <div class="titulo-e-imagem">
-  <h1 class="titulo">Cadastro de Reserva</h1>
-  <img src="casa_do_mar.png" alt="Casa do Mar" class="imagem">
-</div>
+  <header class="cabecalho">
+        <h1 class="titulo">CADASTRO DE RESERVA</h1>
+</header>
+
 
 <form id="reservaForm" enctype="multipart/form-data">
 
