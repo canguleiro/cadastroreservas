@@ -900,6 +900,8 @@ const checkoutFormatado = formatarDataParaPDF(checkout);
 
   // Preenchimento dos dados no PDF (coordenadas ajustadas para o modelo)
 
+  page.drawText(numeroReserva, { x: 37, y: 789, ...estilo }); // Número da reserva
+
   page.drawText(nome, { x: 32, y: 695, ...estilo });
   page.drawText(nascimento, { x: 371, y: 695, ...estilo });
   page.drawText(cpf, { x: 32, y: 657, ...estilo });
@@ -909,7 +911,6 @@ const checkoutFormatado = formatarDataParaPDF(checkout);
   page.drawText(cep, { x: 32, y: 593, ...estilo });
   page.drawText(email, { x: 371, y: 622, ...estilo });
 
-  page.drawText(numeroReserva, { x: 391, y: 561, ...estilo }); // Número da reserva
   page.drawText(checkinFormatado, { x: 32, y: 518, ...estilo });
   page.drawText(checkoutFormatado, { x: 371, y: 518, ...estilo });
   page.drawText(numHospedes, { x: 32, y: 480, ...estilo });
@@ -922,8 +923,6 @@ const checkoutFormatado = formatarDataParaPDF(checkout);
   
   page.drawText(numParcelas, { x: 32, y: 313, ...estilo });
   page.drawText("R$ " + valorParcela, { x: 371, y: 313, ...estilo });
-
-
 
   // Gera e baixa o PDF
   const pdfBytes = await pdfDoc.save();
