@@ -435,6 +435,8 @@ input, select {
   <button type="button" onclick="document.getElementById('arquivoJSON').click()">Carregar Dados</button>
   <button type="button" onclick="salvarJSON()">Salvar Dados</button>
   <button type="button" onclick="gerarPDF()">Gerar Reserva</button>
+  <button onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+
 </form>
 </div>
 
@@ -829,6 +831,31 @@ function sincronizarTaxaLimpeza() {
 document.getElementById('hospedes').addEventListener('change', atualizarDiariaComAltaEstacao);
 document.getElementById('altaEstacao').addEventListener('input', atualizarDiariaComAltaEstacao);
 
+
+
+// Compartilhar por WhatsApp
+
+function enviarWhatsApp() {
+  const nome = document.getElementById('nomeHospede').value;
+  const checkin = document.getElementById('checkin').value.split("-").reverse().join("/");
+  const checkout = document.getElementById('checkout').value.split("-").reverse().join("/");
+  const total = document.getElementById('total').value;
+  const telefone = document.getElementById('telefoneHospede').value;
+
+  if (!nome || !checkin || !checkout || !total) {
+    alert("Preencha os dados principais da reserva antes de enviar.");
+    return;
+  }
+
+  const msg = `Olá, ${nome}!\n\nSegue abaixo os dados da sua reserva:\n\n` +
+              `Check-in: ${checkin}\n` +
+              `Check-out: ${checkout}\n` +
+              `Total: R$ ${total}\n\n` +
+              `Qualquer dúvida, estamos à disposição!`;
+
+  const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
 
 
 
