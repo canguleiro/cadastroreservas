@@ -967,13 +967,21 @@ function salvarJSON() {
 
     const json = JSON.stringify(dadosReserva, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
+
+    // Geração do nome do arquivo com nome + número da reserva
+    const nome = dadosReserva.nomeHospede.trim().replace(/\s+/g, '');
+    const numero = dadosReserva.numeroReserva.trim();
+    const nomeArquivo = `${nome}_${numero}.json`;
+
+    // Criando o link de download
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'reserva.json';
+    a.download = nomeArquivo;
     a.click();
     URL.revokeObjectURL(url);
 }
+
 
 
 // Carregar JSON
