@@ -1,1051 +1,722 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-   
+    <link rel="manifest" href="/manifest.json">
     <title>Casa do Mar</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.7.1/dist/jszip.min.js"></script>  
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.2/dist/FileSaver.min.js"></script>
-
-    <!-- Adicionando o Manifesto do PWA -->
-   <link rel="manifest" href="https://casadomar105.github.io/cadastroreservas/manifest.json">
-    <meta name="theme-color" content="#0B5394">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.24/jspdf.plugin.autotable.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #004080;
+            --secondary-color: #64B5F6;
+            --light-color: #E3F2FD;
+            --dark-color: #0D47A1;
+            --success-color: #4CAF50;
+            --error-color: #F44336;
+            --text-color: #333;
+            --light-text: #fff;
+            --gray-text: #666;
+            --background: #f5f5f5;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         body {
-            font-family: calibri, sans-serif;
-            background-color: #f2f6fa;
-            color: #333;
-
+            background-color: var(--background);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-
-/* Centraliza o container do formulário */
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center; /* Alinhar verticalmente */
-    gap: 5px; /* Espaçamento entre os elementos */
-
-
-/* Estilo do cabeçalho (título + imagem) */
-.cabecalho {
-    width: 100%;
-    text-align: center; /* Centraliza tudo */
-    padding: 10px;
-    border-radius: 5px;
-    background: #FFFFFF; /* Fundo sutil (opcional) */
-    border: 2px solid #004080;
-}
-
-.titulo {
-    color: #004080;
-    font-size: 24px;
-}
-
-.numero-reserva {
-  display: inline-block;
-  font-weight: bold;
-  font-size: 16px;
-  color: #004080;
-  margin-top: 0px;
-}
-
-
-/* Estiliza o formulário para centralizar e justificar */
-
-form {
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between; /* Distribui o espaço igualmente */
-    align-items: baseline; /* Alinha verticalmente à base */
-    gap: 5px;
-    
-
-/* Estiliza os rótulos */
-
-        label {
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            width: 100%;
+            padding-bottom: 80px;
+        }
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
             display: block;
-            font-weight: bold;
-            font-size: 13px;
-            color: #004080;
-            margin-bottom: 4px;
-                    }
-
-.label-inferior {
-    font-weight: normal;
-    font-size: 12px; /* Tamanho da fonte */
-    color: #004080; /* Cor do texto */
-    margin-top: 2px; /* Margem superior */
-    display: block; /* Exibir como bloco */
-}
-
-.label-inferior-pgto {
-    
-    font-size: 14px; /* Tamanho da fonte */
-    color: #004080; /* Cor do texto */
-    margin-top: 6px; /* Margem superior */
-    display: block; /* Exibir como bloco */
-   }
-
-/* Estiliza os títulos das sessões */
-
-        .section-title {
-            background-color: #004080;
-            width: 100%;
-            padding: 6px;
-            border-radius: 5px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
             margin-bottom: 15px;
-            margin-top: 15px;
-            color: #ffffff;
-            font-weight: bold;
-            text-align: center;
+            overflow: hidden;
         }
-
- .section-diviser {
-            background-color: #F8F9FA;
-            width: 100%;
-            padding: 1px;
-            border: 1px solid #E2E3E3;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            margin-top: 10px;
+        .card-header {
+            border-bottom: 3px solid #F5F5F5;
             color: #004080;
+            padding: 10px;
             font-weight: bold;
-            text-align: center;
-            font-size: 14px;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+        .card-body {
+            padding: 20px;
         }
 
+        /* --- ESTILOS DE COMPONENTES ADICIONAIS --- */
 
-/* Caixas de Entrada de Texto */
-       
-input, select {
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    text-align: left; /* Texto alinhado à esquerda */
-    box-sizing: border-box; /* Inclui padding e borda na largura total */
-    }
-
-
-/* Centralizar conteúdo caixas de entrada de texto */
-
-.styled-input {    
-    text-align: center;
-    width: 100%;
-    padding: 6px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f8f9fa;
-    box-sizing: border-box; /* Inclui padding e borda na largura total */
-   }
-
-/* Centralizar conteúdo e estilizar Caixa Valor Total */
-
-.styled-input-valortotal {    
-    text-align: center;
-    font-weight: bold;
-    background-color: #e8f3ff;
-    border: 1px solid #004080;
-   }
-        
-
- /* Dimensões Caixas de Texto - Grupos de Formulário */            
-         
-.form-group40 { width: calc(40% - 8px); }
-.form-group30 { width: calc(30% - 6px); }
-.form-group33 { width: calc(33.33% - 7px); }
-.form-group80 { width: calc(80% - 8px); }
-.form-group20 { width: calc(20% - 2px); }
-.form-group60 { width: calc(60% - 12px); }
-.form-group201 { width: calc(20% - 4px); }
-        .form-group.full-width {
+        /* Loader */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
- 
-/* Alerta de Erro */
+        /* Modal Genérico (para Alertas e Confirmações) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.visible {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        .close-modal {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--gray-text);
+        }
+        .modal-body {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--gray-text);
+        }
+        .form-group input,.form-group textarea,.form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            min-height: 80px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-secondary { background-color: #ddd; color: var(--text-color); }
+        .btn-danger { background-color: var(--error-color); color: white; }
 
-.error-message {
-    color: red;
-    font-size: 11px;
-    margin-top: 2px;
-    display: none;
-}
+        /* --- ESTILOS DAS ABAS --- */
 
+        /* CALENDÁRIO */
+        .calendar-container { width: 100%; max-width: 100%; margin: 0 auto; }
+        .calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-bottom: 10px; }
+        .calendar-header { font-weight: bold; text-align: center; padding: 8px 2px; background-color: var(--background); font-size: 0.85rem; color: var(--primary-color); }
+        .calendar-day { padding: 6px 2px; text-align: center; border-radius: 3px; cursor: pointer; border: 1px solid #D5D5D5; font-size: 0.85rem; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.2s; }
+        .calendar-day:hover { transform: scale(1.05); }
+        .calendar-day.today { border: 1px solid var(--primary-color); position: relative; }
+        .calendar-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 5px 8px; border-radius: 4px; }
+        .calendar-controls button { background: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
+        .calendar-controls h3 { margin: 0; font-size: 1rem; text-align: center; flex-grow: 1; }
+        .reserva-airbnb { background-color: #FFC0CB; }
+        .reserva-particular { background-color: #C4E1FF; }
+        .reserva-limpeza { background-color: #FFA07A; }
+        .reserva-servico { background-color: #FFFF99; }
+        .legenda-container { display: flex; justify-content: space-evenly; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
+        .legenda-item { display: flex; font-size: 10px; text-align: center; align-items: center; cursor: pointer; padding: 5px; border-radius: 4px; border: 1px solid transparent; }
+        .legenda-item.selecionada { border-color: var(--primary-color); background-color: var(--light-color); }
+        .legenda-cor { width: 18px; height: 18px; border-radius: 50%; margin-right: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
 
+        /* Próximo Evento */
+        .next-event-card { margin-top: 20px; }
+        .next-event-content .row { display: flex; justify-content: space-between; align-items: center; }
+        .sem-eventos { display: flex; justify-content: center; align-items: center; color: var(--primary-color); }
+        .next-event-content .evento-tipo { padding: 2px 8px; border-radius: 4px; color: var(--primary-color); margin-right: 10px; }
+        .next-event-content .evento-data { display: flex; align-items: center; color: var(--primary-color); }
+        .next-event-content .evento-data i.material-icons { margin-right: 5px; }
+        .reserva-detalhe { display: flex; align-items: center; gap: 8px; color: var(--primary-color); margin-top: 10px; }
 
-/* Área de Pagamento */
+        /* RESERVAS */
+        .reserva-tabs { display: flex; margin-bottom: 15px; border-bottom: 1px solid #ddd; }
+        .reserva-tab { padding: 10px 15px; cursor: pointer; border-bottom: 2px solid transparent; }
+        .reserva-tab.active { border-bottom: 2px solid var(--primary-color); color: var(--primary-color); font-weight: bold; }
+        .reserva-status { display: inline-block; padding: 3px 8px; background-color: #c4e1ff; border-radius: 4px; font-size: 0.6rem; font-weight: bold; color: #004080; margin-bottom: 5px; }
+        .reserva-status.ativo { background-color: #C8E6C9; color: #2E7D32; }
+        .reserva-detail { display: flex; align-items: center; gap: 0.5rem; padding: 5px; }
+        .reserva-detail i { font-size: 20px; margin-right: 5px; vertical-align: middle; color: var(--primary-color); }
+        .reserva-row { display: flex; justify-content: space-between; gap: 1rem; }
+        .payment-icon { cursor: pointer; margin-left: 5px; color: #bdbdbd; vertical-align: middle; font-size: 24px; border-radius: 20px; border: 2px solid var(--primary-color); }
+        .payment-icon.pago { color: var(--success-color); border-color: var(--success-color); }
+        .reserva-notas { margin-top: 10px; padding: 10px; background-color: #f9f9f9; border-radius: 5px; font-style: italic; white-space: pre-wrap; word-wrap: break-word; }
+        .date-input-group { display: flex; gap: 10px; }
+        .date-input-group .form-group { flex: 1; }
 
-.form-group-pgto {
-    width: 45%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center; /* Alinhar verticalmente */
-    text-align: center;
+        /* Botão Adicionar Flutuante */
+        .add-button { position: fixed; bottom: 80px; right: 30px; width: 45px; height: 45px; border-radius: 50%; background-color: var(--primary-color); color: white; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); cursor: pointer; transition: all 0.3s; z-index: 100; }
+        .add-button:hover { background-color: var(--dark-color); transform: scale(1.1); }
 
-}
+        /* FINANCEIRO */
+        .finance-content { display: none; }
+        .finance-content.active { display: block; }
+        .periodo-container { padding: 10px 15px; }
+        .btn-icon-relatorio { font-size: 1.5em; color: var(--primary-color); cursor: pointer; margin-left: auto; padding: 8px; border-radius: 5px; }
+        .periodo-navegacao { display: flex; align-items: center; justify-content: center; gap: 40px; }
+        .periodo-botao { background-color: var(--primary-color); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+        .periodo-exibicao { font-size: 1rem; font-weight: bold; color: var(--primary-color); min-width: 160px; text-align: center; }
+        .finance-tabs { display: flex; margin-bottom: 20px; }
+        .finance-tab { flex: 1; text-align: center; padding: 8px; cursor: pointer; border-bottom: 2px solid #F2F2F2; }
+        .finance-tab.active { color: #004080; border-bottom: 2.5px solid #004080; font-weight: bold; }
+        .tipo-lancamento { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-tipo { flex: 1; padding: 10px; background: #f5f5f5; border-radius: 4px; cursor: pointer; font-weight: bold; color: #FFFFFF; border: 1px solid #fff; }
+        .btn-tipo.active { border-color: var(--primary-color); background-color: var(--light-color); }
+        #botao-receita { background: #4CAF50; }
+        #botao-despesa { background: #F44336; }
+        .lancamento-item { display: flex; flex-direction: column; border-radius: 5px; padding: 10px; background-color: #FFFFFF; }
+        .lancamento-linha-superior, .lancamento-linha-inferior { display: flex; justify-content: space-between; }
+        .lancamento-linha-superior { margin-bottom: 5px; }
+        .lancamento-data, .lancamento-descricao, .lancamento-valor { font-size: 14px; color: #333; }
+        .lancamento-categoria { font-size: 14px; color: var(--primary-color); }
+        .lancamento-valor { font-weight: bold; text-align: right; }
+        .lancamento-item.receita .lancamento-valor { color: #4CAF50; }
+        .lancamento-item.despesa .lancamento-valor { color: #f44336; }
+        .lancamento-item.receita { border-left: 4px solid var(--success-color); }
+        .lancamento-item.despesa { border-left: 4px solid var(--error-color); }
 
+        /* Swipe Actions */
+        .swipe-container { position: relative; overflow: hidden; border-radius: 5px; margin-bottom: 10px; }
+        .swipe-content { position: relative; background-color: white; transition: transform 0.3s ease; z-index: 1; }
+        .swipe-actions { position: absolute; top: 0; right: 0; height: 100%; display: flex; align-items: center; z-index: 0; transform: translateX(100%); }
+        .swipe-container.swiped .swipe-content { transform: translateX(-120px); }
+        .swipe-container.swiped .swipe-actions { transform: translateX(0); }
+        .swipe-action-btn { width: 50px; height: 50px; margin: 0 5px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; border: none; }
+        .swipe-action-btn.edit { background-color: var(--secondary-color); }
+        .swipe-action-btn.delete { background-color: var(--error-color); }
 
-/* BOTÕES DE AÇÃO */
+        /* Resumo Mensal */
+        .resumo-item { padding: 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #eee; }
+        .resumo-item.receita { background-color: rgba(76, 175, 80, 0.1); }
+        .resumo-item.despesa { background-color: rgba(244, 67, 54, 0.1); }
+        .resumo-item.saldo { font-weight: bold; background-color: #E3F2FD; }
 
-.botoes-acoes {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 10px;
-  width: 100%;
-  margin-top: 20px;
-}
+        /* ORÇAMENTO */
+        .slider-container { margin-bottom: 10px; }
+        .slider-label { display: flex; justify-content: space-between; margin-bottom: 10px; align-items: center; }
+        input[type="range"] { width: 100%; -webkit-appearance: none; background: #ddd; border-radius: 5px; outline: none; height: 5px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary-color); border-radius: 50%; cursor: pointer; }
+        .summary-total { font-weight: bold; font-size: 1.2rem; color: var(--primary-color); border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
+        .lock-icon { cursor: pointer; }
+        input[type="range"]:disabled { opacity: 0.7; }
+        .airbnb-calculation { display: flex; justify-content: space-between; align-items: center; padding: 10px; font-size: 1rem; border-bottom: 1px solid #eee; }
+        .fee-detail { font-size: 0.9rem; color: #4CAF50; }
 
-.botoes-acoes button {
-  flex: 1; /* cada botão ocupa espaço igual */
-  padding: 10px 0;
-  font-weight: bold;
-  background-color: #e6e6e6;
-  color: #212121;
-  border: 0px solid #004080;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.botoes-acoes button:hover {
-  background-color: #cccccc;
-}
-
-/* SMARTPHONE */
-@media (max-width: 600px) {
-  .form-group10,
-  .form-group20,
-  .form-group201,
-  .form-group25,
-  .form-group30,
-  .form-group33,
-  .form-group35,
-  .form-group40,
-  .form-group45,
-  .form-group60,
-  .form-group80,
-  .form-group100,
-  .form-group-full {
-    width: 100% !important;
-  }
-
-
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  input,
-  select,
-  textarea {
-    padding: 10px 6px;
-    font-size: 14px;
-  }
-
-  .styled-input,
-  .styled-input-valortotal {
-    padding: 10px 6px;
-    font-size: 14px;
-  }
-}
-
-
-</style>
+        /* NAVEGAÇÃO INFERIOR */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: white; box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--gray-text); text-decoration: none; font-size: 0.8rem; flex: 1; cursor: pointer; }
+        .nav-item.active { color: var(--primary-color); }
+        .nav-icon { font-size: 24px; margin-bottom: 4px; }
+        @media (max-width: 768px) { .app-container { padding: 10px; } }
+    </style>
 </head>
-
-
 <body>
+    <!-- Elementos Globais -->
+    <div id="loader" class="loader-overlay">
+        <div class="loader"></div>
+    </div>
 
-    <div class="container">
-
- <header class="cabecalho">
-  <h1 class="titulo">CADASTRO DE RESERVA</h1>
-  <span id="numeroReserva" class="numero-reserva"></span>
-</header>
-
-
-
-<form id="reservaForm" enctype="multipart/form-data">
-
-<!-- Dados do Hóspede -->
-        <div class="section-title">DADOS DO HÓSPEDE</div>
-   
-            <div class="form-group60">
-                <label for="nomeHospede">NOME COMPLETO*</label>
-                <input type="text" id="nomeHospede" name="nomeHospede">
+    <div id="alertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="alertTitle" class="modal-title">Aviso</h5>
+                <span class="close-modal material-icons" data-close-modal="alertModal">close</span>
             </div>
+            <div id="alertBody" class="modal-body"></div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" data-close-modal="alertModal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="confirmTitle" class="modal-title">Confirmar</h5>
+                 <span class="close-modal material-icons" data-close-modal="confirmModal">close</span>
+            </div>
+            <div id="confirmBody" class="modal-body"></div>
+            <div class="form-actions">
+                <button type="button" id="confirmCancelBtn" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="confirmOkBtn" class="btn btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">Casa do Mar</div>
+    </header>
+
+    <main class="app-container">
+        <!-- Calendário Tab -->
+        <div id="calendario" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <i class="material-icons">calendar_today</i>
+                    <span>CALENDÁRIO DE RESERVAS</span>
+                </div>
+                <div class="card-body" style="overflow-x: auto;">
+                    <div class="calendar-container">
+                        <div class="calendar-controls">
+                            <button id="btn-mes-anterior" aria-label="Mês anterior">❮</button>
+                            <h3 id="mesAtual">Dezembro 2023</h3>
+                            <button id="btn-mes-seguinte" aria-label="Mês seguinte">❯</button>
+                        </div>
+                    </div>
+                    <div class="calendar" id="calendar-grid"></div>
+                    <div id="legenda-container" class="legenda-container">
+                        <div class="legenda-item selecionada" data-tipo-reserva="particular">
+                            <div class="legenda-cor" style="background-color: #C4E1FF;"></div>
+                            <span>Casa do Mar</span>
+                        </div>
+                        <div class="legenda-item" data-tipo-reserva="airbnb">
+                            <div class="legenda-cor" style="background-color: #FFC0CB;"></div>
+                            <span>Airbnb</span>
+                        </div>
+                        <div class="legenda-item" data-tipo-reserva="limpeza">
+                            <div class="legenda-cor" style="background-color: #FFA07A;"></div>
+                            <span>Limpeza</span>
+                        </div>
+                        <div class="legenda-item" data-tipo-reserva="servico">
+                            <div class="legenda-cor" style="background-color: #FFFF99;"></div>
+                            <span>Serviço</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card next-event-card">
+                <div id="next-event-header" class="card-header">Próximo Evento</div>
+                <div class="card-body" id="next-event-container"></div>
+            </div>
+        </div>
+
+        <!-- Reservas Tab -->
+        <div id="reservas" class="tab-content">
+            <div class="card">
+                <div class="card-header"><i class="material-icons">book</i><span>PAINEL DE RESERVAS</span></div>
+                <div class="card-body">
+                    <div class="reserva-tabs">
+                        <div class="reserva-tab active" data-filtro="ativas">Reservas Ativas</div>
+                        <div class="reserva-tab" data-filtro="historico">Histórico de Reservas</div>
+                    </div>
+                    <div id="reservas-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financeiro Tab -->
+        <div id="financeiro" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <i class="material-icons">attach_money</i>
+                    <span>EXTRATO FINANCEIRO</span>
+                    <i id="btn-gerar-relatorio" class="material-icons btn-icon-relatorio" title="Gerar Relatório PDF" aria-label="Gerar Relatório PDF">description</i>
+                </div>
+                <div class="card-body periodo-container">
+                    <div class="periodo-navegacao">
+                        <button class="periodo-botao" id="btn-mes-anterior-financeiro" aria-label="Mês anterior">
+                            <i class="material-icons">chevron_left</i>
+                        </button>
+                        <div class="periodo-exibicao">
+                            <span id="mesAtualFinanceiro"></span>
+                        </div>
+                        <button class="periodo-botao" id="btn-mes-seguinte-financeiro" aria-label="Mês seguinte">
+                            <i class="material-icons">chevron_right</i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="finance-tabs">
+                        <div class="finance-tab active" data-aba="geral">Geral</div>
+                        <div class="finance-tab" data-aba="receitas">Receitas</div>
+                        <div class="finance-tab" data-aba="despesas">Despesas</div>
+                    </div>
+                    <div id="geral" class="finance-content active">
+                        <div id="extrato-geral-container"></div>
+                    </div>
+                    <div id="receitas" class="finance-content">
+                        <div id="extrato-receitas-container"></div>
+                    </div>
+                    <div id="despesas" class="finance-content">
+                        <div id="extrato-despesas-container"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">Resumo Mensal</div>
+                <div class="card-body">
+                    <div class="resumo-item receita">
+                        <span>Total Receitas:</span>
+                        <span id="total-receitas">R$ 0,00</span>
+                    </div>
+                    <div class="resumo-item despesa">
+                        <span>Total Despesas:</span>
+                        <span id="total-despesas">R$ 0,00</span>
+                    </div>
+                    <div class="resumo-item saldo">
+                        <span>Saldo do Mês:</span>
+                        <span id="saldo-mensal">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orçamento Tab -->
+        <div id="orcamento" class="tab-content">
+            <!-- Conteúdo do orçamento -->
+        </div>
+
+        <!-- Botão Adicionar -->
+        <div id="add-button" class="add-button" style="display: none;">
+            <i class="material-icons">add</i>
+        </div>
+    </main>
+
+    <!-- Modais -->
+    <div id="reservaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalReservaTitle">Nova Reserva</div>
+                <span class="close-modal material-icons" data-close-modal="reservaModal">close</span>
+            </div>
+            <form id="reservaForm">
+                <input type="hidden" id="reservaId">
+                <div class="form-group">
+                    <label for="nomeHospede">Nome do Hóspede</label>
+                    <input type="text" id="nomeHospede" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefoneHospede">Telefone</label>
+                    <input type="tel" id="telefoneHospede" required>
+                </div>
+                <div class="date-input-group">
+                    <div class="form-group">
+                        <label for="dataEntrada">Data de Entrada</label>
+                        <input type="date" id="dataEntrada" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataSaida">Data de Saída</label>
+                        <input type="date" id="dataSaida" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="quantidadeHospedes">Quantidade de Hóspedes</label>
+                    <input type="number" id="quantidadeHospedes" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="valorReserva">Valor da Reserva (R$)</label>
+                    <input type="number" id="valorReserva" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="notasReserva">Notas</label>
+                    <textarea id="notasReserva"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close-modal="reservaModal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lancamentoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalLancamentoTitle">Novo Lançamento</div>
+                <span class="close-modal material-icons" data-close-modal="lancamentoModal">close</span>
+            </div>
+            <form id="lancamentoForm">
+                 <input type="hidden" id="lancamentoId">
+                <div class="form-group">
+                    <label>Tipo de Lançamento</label>
+                    <div class="tipo-lancamento">
+                        <button type="button" class="btn-tipo active" data-tipo="receita" id="botao-receita">Receita</button>
+                        <button type="button" class="btn-tipo" data-tipo="despesa" id="botao-despesa">Despesa</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dataLancamento">Data</label>
+                    <input type="date" id="dataLancamento" required>
+                </div>
+                <div class="form-group">
+                    <label for="categoriaLancamento">Categoria</label>
+                    <select id="categoriaLancamento" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="descricaoLancamento">Descrição</label>
+                    <input type="text" id="descricaoLancamento" required>
+                </div>
+                <div class="form-group">
+                    <label for="valorLancamento">Valor (R$)</label>
+                    <input type="number" step="0.01" min="0" id="valorLancamento" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close-modal="lancamentoModal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Navegação Inferior -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" data-tab="calendario">
+            <i class="material-icons nav-icon">calendar_today</i>
+            <span>Calendário</span>
+        </div>
+        <div class="nav-item" data-tab="reservas">
+            <i class="material-icons nav-icon">book</i>
+            <span>Reservas</span>
+        </div>
+        <div class="nav-item" data-tab="financeiro">
+            <i class="material-icons nav-icon">attach_money</i>
+            <span>Financeiro</span>
+        </div>
+        <div class="nav-item" data-tab="orcamento">
+            <i class="material-icons nav-icon">calculate</i>
+            <span>Orçamento</span>
+        </div>
+    </nav>
+
+<script type="module">
+    // --------------------------------------------------------------------
+    // IMPORTAÇÕES E CONFIGURAÇÃO DO FIREBASE
+    // --------------------------------------------------------------------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    // ATENÇÃO: Suas chaves do Firebase. É altamente recomendável configurar
+    // as Regras de Segurança no console do Firebase para proteger seus dados.
+    const firebaseConfig = {
+        apiKey: "AIzaSyDax5mqsMnkh90HXSSzalJEbA_tVBUh3lA",
+        authDomain: "casadomar.firebaseapp.com",
+        projectId: "casadomar",
+        storageBucket: "casadomar.appspot.com",
+        messagingSenderId: "333707948180",
+        appId: "1:333707948180:web:53cfed12808bb11fb20481",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --------------------------------------------------------------------
+    // ESTADO DA APLICAÇÃO (VARIÁVEIS GLOBAIS)
+    // --------------------------------------------------------------------
+    const AppState = {
+        reservas: [],
+        lancamentos: [],
+        calendarioManual: {},
+        calendario: {
+            mes: new Date().getMonth(),
+            ano: new Date().getFullYear(),
+            tipoReservaSelecionado: 'particular',
+        },
+        financeiro: {
+            mes: new Date().getMonth(),
+            ano: new Date().getFullYear(),
+        },
+        ui: {
+            abaAtivaReservas: 'ativas',
+            abaAtivaFinanceiro: 'geral',
+            activeTab: 'calendario',
+        },
+        confirmCallback: null,
+    };
+
+    const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+    const CATEGORIAS = {
+        receita: ['Airbnb', 'Casa do Mar', 'Aporte'],
+        despesa: ['Água (Caern)', 'Água Mineral', 'Combustível', 'DAS/MEI', 'Energia (Cosern)', 'Energia Solar (BNB)', 'Faxina', 'Cartão Crédito', 'Internet', 'Lavanderia', 'Material Construção', 'Material Limpeza/Higiene', 'Piscineiro (Honey)', 'Remuneração', 'Retirada', 'Serviço/Reparo/Manutenção', 'Serviços Gerais (Sr. Hailton)', 'Taxas/Impostos', 'Vigilância', 'Compras Diversas']
+    };
+
+    // --------------------------------------------------------------------
+    // FUNÇÕES DE UTILIDADE
+    // --------------------------------------------------------------------
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => document.querySelectorAll(selector);
+
+    const formatarMoeda = (valor) => `R$ ${parseFloat(valor || 0).toFixed(2).replace('.', ',')}`;
+    const formatarData = (dataStr) => { // YYYY-MM-DD -> DD/MM/YYYY
+        if (!dataStr) return '';
+        const [ano, mes, dia] = dataStr.split('-');
+        return `${dia}/${mes}/${ano}`;
+    };
+    const showLoader = (show) => { $('#loader').style.display = show ? 'flex' : 'none'; };
+
+    // Função para exibir alertas customizados
+    const showAlert = (message, title = 'Aviso') => {
+        $('#alertTitle').textContent = title;
+        $('#alertBody').textContent = message;
+        $('#alertModal').classList.add('visible');
+    };
+
+    // Função para exibir confirmações customizadas
+    const showConfirm = (message, title = 'Confirmar') => {
+        return new Promise((resolve) => {
+            $('#confirmTitle').textContent = title;
+            $('#confirmBody').textContent = message;
+            $('#confirmModal').classList.add('visible');
             
-           <div class="form-group201">
-                <label for="nascimentoHospede">NASCIMENTO*</label>
-                <input type="text" id="nascimentoHospede" name="nascimentoHospede" class="styled-input" placeholder="dd/mm/aaaa" onfocus="this.placeholder = ''" oninput="formatarData(this)" onblur="validarData(this)">
-                <span id="dataError" class="error-message">Data inválida</span>
-           </div>
-
-
-           <div class="form-group201">
-               <label for="cpfHospede">CPF*</label>
-               <input type="text" id="cpfHospede" name="cpfHospede" placeholder="000.000.000-00" onfocus="this.placeholder = ''" oninput="formatarCPF(this)" onblur="validarCPF(this)" class="styled-input">
-                <span id="cpfError" class="error-message">CPF inválido</span>
-            </div>
-
-            <div class="form-group80">
-                <label for="enderecoHospede">ENDEREÇO* (logradouro, n°, bairro, complemento)</label>
-                <input type="text" id="enderecoHospede" name="enderecoHospede">
-            </div>
-
-          <div class="form-group20">
-               <label for="cepHospede">CEP*</label>
-               <input type="text" id="cepHospede" name="cepHospede" placeholder="00000-000" onfocus="this.placeholder = ''" oninput="formatarCEP(this)" onblur="validarCEP(this)" class="styled-input">
-               <span id="cepError" class="error-message">CEP inválido</span>
-           </div>
-
-           <div class="form-group40">
-                <label for="cidadeHospede">CIDADE/UF - PAÍS*</label>
-                <input type="text" id="cidadeHospede" name="cidadeHospede">
-            </div>
-
-
-            <div class="form-group30">
-               <label for="telefoneHospede">TELEFONE*</label>
-               <input type="text" id="telefoneHospede" name="telefoneHospede" placeholder="+55 (00) 00000-0000" onfocus="this.placeholder = ''"  oninput="formatarTelefone(this)"                    onblur="validarTelefone(this)" class="styled-input">
-               <span id="telefoneError" class="error-message">Telefone inválido</span>
-            </div> 
-
-            <div class="form-group30">
-              <label for="emailHospede">E-MAIL*</label>
-             <input type="email" id="emailHospede" name="emailHospede" placeholder="nome@exemplo.com" onfocus="this.placeholder = ''" onblur="validarEmail(this)" class="styled-input">
-             <span id="emailError" class="error-message">E-mail inválido</span>
-            </div>
- 
-          
-<!-- Dados da Locação -->
-
-<div class="section-title">
-  DADOS DA LOCAÇÃO
-</div>
-
-            <div class="form-group33">
-                <label for="checkin">CHECK-IN</label>
-                <input type="date" id="checkin" name="checkin" class="styled-input">
-            </div>
-            <div class="form-group33">
-                <label for="checkout">CHECK-OUT</label>
-                <input type="date" id="checkout" name="checkout" disabled class="styled-input">
-            </div>
-            <div class="form-group33">
-                <label for="numNoites">NOITES (mínimo 2)</label>
-                <input type="number" id="numNoites" name="numNoites" class="styled-input" readonly>
-            </div>
-
-           <div class="form-group33">
-    <label for="numHospedes">HÓSPEDE(S)</label>
-    <input type="number" id="hospedes" name="hospedes" value="1" min="1" max="12" class="styled-input">
-    <label for="numHospedes" class="label-inferior">máximo 12</label>
-<span id="hospedesError" class="error-message">Limite ultrapassado</span>
-
-</div>
-
-<div class="form-group33">
-    <label for="numCriancas">CRIANÇA(S)</label>
-    <input type="number" id="criancas" name="criancas" value="0" min="0" max="12" class="styled-input">
-    <label for="criancas" class="label-inferior">até 2 anos</label>
-<span id="criancasError" class="error-message">Limite ultrapassado</span>
-
-</div>
-
-
-<div class="form-group33" style="position: relative;">
-  <label for="valorDiaria">VALOR DA DIÁRIA (R$)</label>
-  <input type="number" id="valorDiaria" name="valorDiaria" value="600" class="styled-input" readonly>
-  <span id="toggleDiaria" onclick="alternarCampo('valorDiaria', 'toggleDiaria')" 
-      style="position:absolute; top: 25px; right: 10px; cursor: pointer;">
-  <i class="fas fa-lock" style="color:#004080; font-size: 15px;"></i>
-</span>
-
-  <label for="valorDiaria" class="label-inferior">até 6 pessoas o valor é fixo</label>
-</div>
-
-<div class="form-group33" style="position: relative;">
-  <label for="taxaLimpeza">TAXA DE LIMPEZA (R$)</label>
-  <input type="number" id="taxaLimpeza" name="taxaLimpeza" value="300" class="styled-input" readonly>
-  <span id="toggleLimpeza" onclick="alternarCampo('taxaLimpeza', 'toggleLimpeza')" style="position:absolute; top: 25px; right: 10px; cursor: pointer;">
-  <i class="fas fa-lock" style="color:#004080; font-size: 15px;"></i>
-</span>
-</div>
-
-
-            <div class="form-group33">
-                <label for="desconto">DESCONTO (%)</label>
-                <input type="number" id="desconto" name="desconto" class="styled-input">
-                <label for="desconto" class="label-inferior">*não incide sobre a Taxa de Limpeza</label> 
-            </div>
-
-<div class="form-group33" style="position: relative;">
-  <label for="valorTotal">TOTAL (R$)</label>
-  <input type="text" id="valorTotal" name="valorTotal" value="0,00" class="styled-input-valortotal" readonly>
-  <span id="toggleTotal" onclick="alternarCampo('valorTotal', 'toggleTotal')" 
-        style="position:absolute; top: 25px; right: 10px; cursor: pointer;">
-    <i class="fas fa-lock" style="color:#004080; font-size: 15px;"></i>
-  </span>
-</div>
-
-
-
-<!-- Forma de Pagamento -->
-
-<div class="section-title">DADOS DE PAGAMENTO</div>
-
-<div class="form-group33">
-  <label for="numParcelas">NÚMERO DE PARCELAS:</label>
-  <input type="number" id="numParcelas" name="numParcelas" min="1" max="12" value="1" class="styled-input" oninput="calcularValorParcela()">
-</div>
-
-<div class="form-group33">
-  <label for="valorParcela">VALOR DA PARCELA (R$):</label>
-  <input type="text" id="valorParcela" name="valorParcela" class="styled-input" readonly>
-
-</div>
-
-<div class="form-group33">
-<label for="altaEstacao">ALTA ESTAÇÃO (%)</label>
-<input type="number" id="altaEstacao" name="altaEstacao" class="styled-input" placeholder="exemplo: 35">
-<label for="altaEstacao" class="label-inferior">*dezembro/janeiro/fevereiro</label> 
-
-</div>
-
-
-<!-- Botões de Ações -->
-<div class="botoes-acoes">
-  <input type="file" id="arquivoJSON" accept=".json" style="display: none;" onchange="carregarJSON()" />
-  <button type="button" onclick="document.getElementById('arquivoJSON').click()">Carregar Dados</button>
-  <button type="button" onclick="salvarJSON()">Salvar Dados</button>
-  <button type="button" onclick="gerarPDF()">Gerar Reserva</button>
-
-</form>
-</div>
-
-
-
-<script>
-
-
-document.getElementById('hospedes').addEventListener('blur', function () {
-    const valor = parseInt(this.value);
-    const erro = document.getElementById('hospedesError');
-
-    if (valor > 12) {
-        erro.style.display = 'inline';
-        this.focus();
-        this.select();
-    } else {
-        erro.style.display = 'none';
-    }
-});
-
-document.getElementById('criancas').addEventListener('blur', function () {
-    const valor = parseInt(this.value);
-    const erro = document.getElementById('criancasError');
-
-    if (valor > 12) {
-        erro.style.display = 'inline';
-        this.focus();
-        this.select();
-    } else {
-        erro.style.display = 'none';
-    }
-});
-
-
-
-// Atualiza o campo RESERVA N° com a data do check-in no formato ddmmaaaa
-function atualizarNumeroReserva() {
-    const checkin = document.getElementById('checkin').value;
-    const reservaSpan = document.getElementById('numeroReserva');
-
-    if (checkin) {
-        const [ano, mes, dia] = checkin.split("-");
-        reservaSpan.textContent = `N° ${dia}${mes}${ano}`;
-    } else {
-        reservaSpan.textContent = 'N° 12345';
-    }
-}
-
-function validarData(campo) {
-    const dataPattern = /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d\d$/;
-    const dataError = document.getElementById('dataError');
-    if (!dataPattern.test(campo.value)) {
-        dataError.style.display = 'inline';
-    } else {
-        dataError.style.display = 'none';
-    }
-}
-
-document.getElementById('nascimentoHospede').addEventListener('keypress', function(event) {
-    if (isNaN(String.fromCharCode(event.which)) && String.fromCharCode(event.which) !== '/') {
-        event.preventDefault(); // Previne a entrada de texto
-    }
-});
-
-
-// Função Data Atual
-
- function formatarData(data) {
-            const dia = String(data.getDate()).padStart(2, '0');
-            const mes = String(data.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
-            const ano = data.getFullYear();
-            return `${dia}${mes}${ano}`; // Sem barras
-        }
-
-// Função formatar Data de Nascimento
+            AppState.confirmCallback = (result) => {
+                $('#confirmModal').classList.remove('visible');
+                resolve(result);
+            };
+        });
+    };
     
-document.getElementById("nascimentoHospede").addEventListener("input", function (e) {
-  let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+    // --------------------------------------------------------------------
+    // LÓGICA DO FIREBASE (BANCO DE DADOS)
+    // --------------------------------------------------------------------
 
-  // Limita a 8 dígitos (DDMMAAAA)
-  value = value.substring(0, 8);
-
-  // Aplica formatação DD/MM/AAAA
-  if (value.length > 4) {
-    value = value.replace(/(\d{2})(\d{2})(\d+)/, '$1/$2/$3');
-  } else if (value.length > 2) {
-    value = value.replace(/(\d{2})(\d+)/, '$1/$2');
-  }
-
-  e.target.value = value;
-});
-
-
-// Função formatar e validar CPF
- 
-function formatarCPF(campo) {
-    let valor = campo.value.replace(/\D/g, '');
-    if (valor.length > 11) {
-        valor = valor.slice(0, 11);
-    }
-    valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
-                 .replace(/(\d{3})(\d)/, '$1.$2')
-                 .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-    campo.value = valor;
-}
-
-function validarCPF(campo) {
-    const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-    const cpfError = document.getElementById('cpfError');
-    if (!cpfPattern.test(campo.value)) {
-        cpfError.style.display = 'inline';
-    } else {
-        cpfError.style.display = 'none';
-    }
-}
-
-// Função formatar e validar CEP
-
-function formatarCEP(campo) {
-    let valor = campo.value.replace(/\D/g, '');
-    if (valor.length > 8) {
-        valor = valor.slice(0, 8);
-    }
-    valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
-    campo.value = valor;
-}
-
-function validarCEP(campo) {
-    const cepPattern = /^\d{5}-\d{3}$/;
-    const cepError = document.getElementById('cepError');
-    if (!cepPattern.test(campo.value)) {
-        cepError.style.display = 'inline';
-    } else {
-        cepError.style.display = 'none';
-    }
-}
-
-// Função formatar e validar Telefone
-
-function formatarTelefone(campo) {
-    let valor = campo.value.replace(/[^+\d]/g, ''); // Mantém apenas dígitos e o símbolo +
-
-    // Remove tudo que não for número ou "+" no início
-    if (!valor.startsWith("+")) {
-        valor = "+" + valor;
-    }
-
-    // Tenta formatar se tiver ao menos 13 caracteres (ex: +55XXXXXXXXXXX)
-    if (valor.length >= 13) {
-        valor = valor.replace(/^(\+\d{1,3})(\d{2})(\d{5})(\d{4}).*$/, '$1 ($2) $3-$4');
-    }
-
-    campo.value = valor;
-}
-
-function validarTelefone(campo) {
-    const telefonePattern = /^\+\d{1,3} \(\d{2}\) \d{5}-\d{4}$/;
-    const telefoneError = document.getElementById('telefoneError');
-
-    if (!telefonePattern.test(campo.value)) {
-        telefoneError.style.display = 'inline';
-    } else {
-        telefoneError.style.display = 'none';
-    }
-}
-
-document.getElementById('telefoneHospede').addEventListener('keypress', function(event) {
-    if (isNaN(String.fromCharCode(event.which))) {
-        event.preventDefault(); // Previne a entrada de texto
-    }
-});
-
-
-// Função validar Email
-
-function validarEmail(campo) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const emailError = document.getElementById('emailError');
-
-    if (!emailPattern.test(campo.value)) {
-        emailError.style.display = 'inline';
-    } else {
-        emailError.style.display = 'none';
-    }
-}
-
-
-
-// Função para calcular o número de dias entre as datas de checkin e checkout  
-
-function calcularNoites() {   
-  const checkin = document.getElementById('checkin').value;   
-  const checkout = document.getElementById('checkout').value;   
-  const noites = document.getElementById('numNoites');   
-   
-  if (checkin && checkout) {   
-   const dataCheckin = new Date(checkin);   
-   const dataCheckout = new Date(checkout);   
-   const diferenca = dataCheckout.getTime() - dataCheckin.getTime();   
-   const noitesCalculadas = Math.round(diferenca / (1000 * 3600 * 24));   
-   
-   noites.value = noitesCalculadas;   
-   atualizarValorTotal(); // Chama a função atualizarValorTotal() aqui
-  }   
-}  
-
-
-
-// Função para bloquear/desbloquear campos
-
-function alternarCampo(idCampo, idCadeado) {
-    const campo = document.getElementById(idCampo);
-    const icone = document.querySelector(`#${idCadeado} i`);
-
-    if (campo.readOnly) {
-        campo.readOnly = false;
-        icone.classList.remove('fa-lock');
-        icone.classList.add('fa-lock-open');
-    } else {
-        campo.readOnly = true;
-        icone.classList.remove('fa-lock-open');
-        icone.classList.add('fa-lock');
-
-        // Se o campo for valorDiaria, atualiza o valor na configuração
-        if (idCampo === 'valorDiaria') {
-            configuracoes.valorDiaria = parseFloat(campo.value);
-        }
-
-        // Se o campo for taxaLimpeza, atualiza também
-        if (idCampo === 'taxaLimpeza') {
-            configuracoes.taxaLimpeza = parseFloat(campo.value);
-        }
-
-        atualizarDiaria();
-        atualizarValorTotal();
-    }
-}
-  
-
-// Regras do Calendário para mínimo de 2 noites  
-
-document.getElementById('checkin').addEventListener('change', function() {
-    var checkinDate = new Date(this.value);
-    var checkoutDateInput = document.getElementById('checkout');
-    
-    if (checkinDate) {
-      // Habilitar o campo de data de check-out
-      checkoutDateInput.disabled = false;
-      
-      // Calcular a data mínima para o check-out (dois dias após o check-in)
-      var minCheckoutDate = new Date(checkinDate);
-      minCheckoutDate.setDate(minCheckoutDate.getDate() + 2);
-      
-      // Definir o valor mínimo do campo de data de check-out
-      checkoutDateInput.min = minCheckoutDate.toISOString().split('T')[0];
-    }
-  });
-
-
-// Adiciona evento de mudança nos campos de data para calcular as noites  
-
-document.getElementById('checkin').addEventListener('change', calcularNoites);  
-document.getElementById('checkout').addEventListener('change', calcularNoites);
-  
-// Bloqueia o campo "noite" para somente leitura  
-document.getElementById('numNoites').readOnly = true;
-
-
-// Função fomratar valor total em milhar 
-
-function formatarValorTotal(valor) {
-    // Converte para número flutuante
-    valor = parseFloat(valor).toFixed(2);
-    
-    // Se não for um número válido, retorna zero
-    if (isNaN(valor)) {
-        return '0,00';
-    }
-
-    // Converte o ponto decimal para vírgula
-    valor = valor.replace(".", ",");
-
-    // Adiciona os pontos de milhar
-    valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-    return valor;
-}
-
- 
-// Função para atualizar o valor total 
- 
-function atualizarValorTotal() {
-
-const campoTotal = document.getElementById('valorTotal');
-if (!campoTotal.readOnly) {
-    return; // Se estiver desbloqueado, não sobrescreve o valor manual
-}
-    const noites = parseInt(document.getElementById('numNoites').value);
-    const diaria = parseFloat(document.getElementById('valorDiaria').value);
-    const desconto = parseFloat(document.getElementById('desconto').value);
-    const taxaLimpeza = parseFloat(document.getElementById('taxaLimpeza').value);
-    const valorTotal = document.getElementById('valorTotal');
-
-    if (!isNaN(noites) && !isNaN(diaria)) {
-        let valorBase = noites * diaria;
+    /**
+     * Inicia os listeners para ouvir mudanças em tempo real no Firebase.
+     */
+    function iniciarListenersFirebase() {
+        showLoader(true);
+        let cargasIniciais = {reservas: false, lancamentos: false, calendario: false};
         
-        if (!isNaN(desconto) && desconto > 0) {
-            valorBase = valorBase * (1 - (desconto / 100));
-        }
+        const verificarCargaCompleta = () => {
+            if (Object.values(cargasIniciais).every(Boolean)) {
+                 showLoader(false);
+                 renderizarTudo();
+            }
+        };
 
-        const valorTotalCalculado = valorBase + (isNaN(taxaLimpeza) ? 0 : taxaLimpeza);
+        onSnapshot(collection(db, "reservas"), (snapshot) => {
+            AppState.reservas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            if (!cargasIniciais.reservas) {
+                cargasIniciais.reservas = true;
+                verificarCargaCompleta();
+            } else {
+                renderizarTudo();
+            }
+             verificarReservasVencidas(); // Verifica após carregar/atualizar
+        }, (error) => console.error("Erro ao carregar reservas:", error));
 
-        valorTotal.value = formatarValorTotal(valorTotalCalculado.toFixed(2));
-    } else {
-        valorTotal.value = '0,00';
+        onSnapshot(collection(db, "lancamentos"), (snapshot) => {
+            AppState.lancamentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+             if (!cargasIniciais.lancamentos) {
+                cargasIniciais.lancamentos = true;
+                verificarCargaCompleta();
+            } else {
+                renderizarTudo();
+            }
+        }, (error) => console.error("Erro ao carregar lançamentos:", error));
+
+        onSnapshot(doc(db, "calendario", "manual"), (docSnap) => {
+            if (docSnap.exists()) {
+                AppState.calendarioManual = docSnap.data();
+            } else {
+                AppState.calendarioManual = {};
+            }
+            if (!cargasIniciais.calendario) {
+                cargasIniciais.calendario = true;
+                verificarCargaCompleta();
+            } else {
+                renderizarTudo();
+            }
+        }, (error) => console.error("Erro ao carregar calendário manual:", error));
     }
-
-    calcularValorParcela();
-}
-
-
-  
-// Chama a função ao alterar o valor de qualquer um dos campos  
-document.getElementById('numNoites').addEventListener('onchange', atualizarValorTotal);  
-document.getElementById('valorDiaria').addEventListener('onchange', atualizarValorTotal);  
-document.getElementById('desconto').addEventListener('input', atualizarValorTotal);  
-document.getElementById('taxaLimpeza').addEventListener('onchange', atualizarValorTotal);  
-  
-// Chama a função ao carregar a página  
-atualizarValorTotal();
-calcularValorParcela();
-document.getElementById('taxaLimpeza').readOnly = true;
-
-
-// Função Calcular Parcela  
-
-function calcularValorParcela() {
-  const numParcelas = parseInt(document.getElementById('numParcelas').value);
-  let valorTotal = document.getElementById('valorTotal').value;
-
-  valorTotal = valorTotal.replace(/\./g, '').replace(',', '.');
-  valorTotal = parseFloat(valorTotal);
-
-  if (!isNaN(valorTotal) && numParcelas >= 1) {
-    const valorParcela = valorTotal / numParcelas;
-    document.getElementById('valorParcela').value = valorParcela
-      .toFixed(2)
-      .replace('.', ',')
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  } else {
-    document.getElementById('valorParcela').value = '';
-  }
-}
-
-
-function atualizarDiariaComAltaEstacao() {
-    const hospedes = parseInt(document.getElementById('hospedes').value, 10);
-    const diariaBase = configuracoes.valorDiaria;
-    const diariaElement = document.getElementById('valorDiaria');
-    const altaEstacao = parseFloat(document.getElementById('altaEstacao').value);
-
-    let diariaCalculada = diariaBase;
-
-    // Adiciona valor por hóspede extra (se houver)
-    if (hospedes > 6 && hospedes <= 12) {
-        const valorHospedeExtra = diariaBase / 6;
-        diariaCalculada += (hospedes - 6) * valorHospedeExtra;
-    }
-
-    // Aplica acréscimo de alta estação
-    if (!isNaN(altaEstacao) && altaEstacao > 0) {
-        diariaCalculada *= (1 + altaEstacao / 100);
-    }
-
-    diariaElement.value = diariaCalculada.toFixed(2);
-
-    atualizarValorTotal(); // Atualiza total e parcelas
-}
-
-
-
-function syncValues() {
-    var taxaLimpezaConfig = document.getElementById('taxaLimpezaConfig').value;
-    document.getElementById('taxaLimpeza').value = taxaLimpezaConfig;
-  }
-
-  // Para sincronizar o valor inicial
-  window.addEventListener('DOMContentLoaded', (event) => {
-    syncValues();
-  });
-
-
-// Função Configuração
-
-const configuracoes = {
-    valorDiaria: 600,   // atualizar valor da diária
-    taxaLimpeza: 300
-};
-
-function sincronizarTaxaLimpeza() {
-    document.getElementById('taxaLimpeza').value = configuracoes.taxaLimpeza;
-}
-
-
-// Chama a função ao alterar o valor do campo 'Hóspedes'
-document.getElementById('hospedes').addEventListener('change', atualizarDiariaComAltaEstacao);
-document.getElementById('altaEstacao').addEventListener('input', atualizarDiariaComAltaEstacao);
-
-
-// Gerar PDF
-
-async function gerarPDF() {
-  const { PDFDocument, rgb, StandardFonts } = PDFLib;
-
-  const fundoBytes = await fetch('CADASTRO RESERVA.png').then(res => res.arrayBuffer());
-  const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([595, 842]);
-
-  const fundoImg = await pdfDoc.embedPng(fundoBytes);
-  page.drawImage(fundoImg, {
-    x: 0,
-    y: 0,
-    width: 595,
-    height: 842
-  });
-
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-  const nome = document.getElementById("nomeHospede").value;
-  const nascimento = document.getElementById("nascimentoHospede").value;
-  const cpf = document.getElementById("cpfHospede").value;
-  const telefone = document.getElementById("telefoneHospede").value;
-  const endereco = document.getElementById("enderecoHospede").value;
-  const cep = document.getElementById("cepHospede").value;
-  const cidade = document.getElementById("cidadeHospede").value;
-  const email = document.getElementById("emailHospede").value;
-
-  const numeroReserva = document.getElementById("numeroReserva").textContent;
-  const checkin = document.getElementById("checkin").value;
-  const checkout = document.getElementById("checkout").value;
-
-  function formatarDataParaPDF(dataISO) {
-    if (!dataISO) return '';
-    const [ano, mes, dia] = dataISO.split("-");
-    return `${dia}/${mes}/${ano}`;
-  }
-
-  const checkinFormatado = formatarDataParaPDF(checkin);
-  const checkoutFormatado = formatarDataParaPDF(checkout);
-
-  const numNoites = document.getElementById("numNoites").value;
-  const numHospedes = document.getElementById("hospedes").value;
-  const numCriancas = document.getElementById("criancas").value;
-
-  const valorDiaria = document.getElementById("valorDiaria").value;
-  const taxaLimpeza = document.getElementById("taxaLimpeza").value;
-  const desconto = document.getElementById("desconto").value;
-  const total = document.getElementById("valorTotal").value;
-  const formaPagamento = document.querySelector('input[name="pagamento"]:checked')?.value || "".value;
-  const numParcelas = document.getElementById("numParcelas").value;
-  const valorParcela = document.getElementById("valorParcela").value;
-
-  const estilo = {
-    size: 11,
-    font,
-    color: rgb(0, 0, 0)
-  };
-
-  page.drawText(numeroReserva, { x: 37, y: 789, ...estilo });
-
-  page.drawText(nome, { x: 32, y: 695, ...estilo });
-  page.drawText(nascimento, { x: 371, y: 695, ...estilo });
-  page.drawText(cpf, { x: 32, y: 657, ...estilo });
-  page.drawText(telefone, { x: 371, y: 657, ...estilo });
-  page.drawText(endereco, { x: 32, y: 622, ...estilo });
-  page.drawText(cidade, { x: 32, y: 607, ...estilo });
-  page.drawText(cep, { x: 32, y: 593, ...estilo });
-  page.drawText(email, { x: 371, y: 622, ...estilo });
-
-  page.drawText(checkinFormatado, { x: 32, y: 518, ...estilo });
-  page.drawText(checkoutFormatado, { x: 371, y: 518, ...estilo });
-  page.drawText(numHospedes, { x: 32, y: 480, ...estilo });
-  page.drawText(numCriancas, { x: 371, y: 480, ...estilo });
-  page.drawText(numNoites, { x: 32, y: 444, ...estilo });
-  page.drawText("R$ " + valorDiaria, { x: 371, y: 444, ...estilo });
-  page.drawText("R$ " + taxaLimpeza, { x: 32, y: 406, ...estilo });
-  page.drawText(desconto, { x: 213, y: 406, ...estilo });
-  page.drawText("R$ " + total, { x: 371, y: 406, ...estilo });
-
-  page.drawText(numParcelas, { x: 32, y: 313, ...estilo });
-  page.drawText("R$ " + valorParcela, { x: 371, y: 313, ...estilo });
-
-  const pdfBytes = await pdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  const url = URL.createObjectURL(blob);
-
-  // Nome do arquivo formatado: numeroReserva_Nome_Com_Underlines.pdf
-  const nomeFormatado = nome.trim().replace(/\s+/g, '_');
-  const nomeArquivo = `${numeroReserva.trim()}_${nomeFormatado}.pdf`;
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = nomeArquivo;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
- // Salvar JSON
-
-function salvarJSON() {
-    const dadosReserva = {
-        numeroReserva: document.getElementById('numeroReserva').textContent,
-        nomeHospede: document.getElementById('nomeHospede').value,
-        nascimentoHospede: document.getElementById('nascimentoHospede').value,
-        cpfHospede: document.getElementById('cpfHospede').value,
-        enderecoHospede: document.getElementById('enderecoHospede').value,
-        cepHospede: document.getElementById('cepHospede').value,
-        cidadeHospede: document.getElementById('cidadeHospede').value,
-        telefoneHospede: document.getElementById('telefoneHospede').value,
-        emailHospede: document.getElementById('emailHospede').value,
-        checkin: document.getElementById('checkin').value,
-        checkout: document.getElementById('checkout').value,
-        numNoites: document.getElementById('numNoites').value,
-        numHospedes: document.getElementById('hospedes').value,
-        numCriancas: document.getElementById('criancas').value,
-        valorDiaria: document.getElementById('valorDiaria').value,
-        taxaLimpeza: document.getElementById('taxaLimpeza').value,
-        desconto: document.getElementById('desconto').value,
-        total: document.getElementById('valorTotal').value,
-        numParcelas: document.getElementById('numParcelas').value,
-        valorParcela: document.getElementById('valorParcela').value
-    };
-
-    const json = JSON.stringify(dadosReserva, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-
-    // Formatando nome e número
-    const nome = dadosReserva.nomeHospede.trim().replace(/\s+/g, '_');
-    const numero = dadosReserva.numeroReserva.trim();
-    const nomeArquivo = `${numero}_${nome}.json`;
-
-    // Criando o link de download
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = nomeArquivo;
-    a.click();
-    URL.revokeObjectURL(url);
-}
-
-
-// Carregar JSON
-
-function carregarJSON() {
-    const input = document.getElementById('arquivoJSON');
-    const file = input.files[0];
-    const reader = new FileReader();
-
-    reader.onload = function(event) {
-        const json = event.target.result;
-        const dadosReserva = JSON.parse(json);
-
-        document.getElementById('numeroReserva').textContent = dadosReserva.numeroReserva;
-        document.getElementById('nomeHospede').value = dadosReserva.nomeHospede;
-        document.getElementById('nascimentoHospede').value = dadosReserva.nascimentoHospede;
-        document.getElementById('cpfHospede').value = dadosReserva.cpfHospede;
-        document.getElementById('enderecoHospede').value = dadosReserva.enderecoHospede;
-        document.getElementById('cepHospede').value = dadosReserva.cepHospede;
-        document.getElementById('cidadeHospede').value = dadosReserva.cidadeHospede;
-        document.getElementById('telefoneHospede').value = dadosReserva.telefoneHospede;
-        document.getElementById('emailHospede').value = dadosReserva.emailHospede;
-        document.getElementById('checkin').value = dadosReserva.checkin;
-        document.getElementById('checkout').value = dadosReserva.checkout;
-        document.getElementById('numNoites').value = dadosReserva.numNoites;
-        document.getElementById('hospedes').value = dadosReserva.numHospedes;
-        document.getElementById('criancas').value = dadosReserva.numCriancas;
-        document.getElementById('valorDiaria').value = dadosReserva.valorDiaria;
-        document.getElementById('taxaLimpeza').value = dadosReserva.taxaLimpeza;
-        document.getElementById('desconto').value = dadosReserva.desconto;
-        document.getElementById('valorTotal').value = dadosReserva.total;
-        document.getElementById('numParcelas').value = dadosReserva.numParcelas;
-
-        // Valor da parcela: usa o do JSON se existir, senão calcula automaticamente
-        if (dadosReserva.valorParcela) {
-            document.getElementById('valorParcela').value = dadosReserva.valorParcela;
-        } else {
-            calcularValorParcela();
-        }
-    };
-
-    reader.readAsText(file);
-}
-
-document.getElementById('checkin').addEventListener('change', atualizarNumeroReserva);
-
-     // Registra o Service Worker para o PWA
- if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('https://casadomar105.github.io/cadastroreservas/sw.js')
-                .then(() => console.log('Service Worker registrado com sucesso!'))
-                .catch((error) => console.log('Erro ao registrar Service Worker:', error));
-        }
-
-
-
+    
+    // ... (restante do script)
 </script>
-
 </body>
 </html>
