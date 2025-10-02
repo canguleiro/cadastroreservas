@@ -56,6 +56,14 @@
             font-size: 1.2rem;
             font-weight: bold;
         }
+        #logout-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
         .tab-content {
             display: none;
         }
@@ -84,6 +92,28 @@
         }
 
         /* --- ESTILOS DE COMPONENTES ADICIONAIS --- */
+
+        /* Auth Container */
+        #auth-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        #login-card {
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+        }
+        .hidden {
+            display: none !important;
+        }
 
         /* Loader */
         .loader-overlay {
@@ -307,8 +337,29 @@
 </head>
 <body>
     <!-- Elementos Globais -->
-    <div id="loader" class="loader-overlay">
+    <div id="loader" class="loader-overlay hidden">
         <div class="loader"></div>
+    </div>
+    
+    <div id="auth-container">
+        <div id="login-card" class="card">
+            <h3 class="card-header">Login - Casa do Mar</h3>
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <div class="form-actions" style="justify-content: center;">
+                        <button type="submit" class="btn btn-primary">Entrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div id="alertModal" class="modal">
@@ -340,9 +391,12 @@
 
     <header>
         <div class="logo">Casa do Mar</div>
+        <button id="logout-button" class="hidden" title="Sair">
+            <i class="material-icons">logout</i>
+        </button>
     </header>
 
-    <main class="app-container">
+    <main class="app-container hidden">
         <!-- Calendário Tab -->
         <div id="calendario" class="tab-content active">
             <div class="card">
@@ -557,7 +611,7 @@
 
 
     <!-- Navegação Inferior -->
-    <nav class="bottom-nav">
+    <nav class="bottom-nav hidden">
         <div class="nav-item active" data-tab="calendario">
             <i class="material-icons nav-icon">calendar_today</i>
             <span>Calendário</span>
@@ -582,9 +636,8 @@
     // --------------------------------------------------------------------
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-    // ATENÇÃO: Suas chaves do Firebase. É altamente recomendável configurar
-    // as Regras de Segurança no console do Firebase para proteger seus dados.
     const firebaseConfig = {
         apiKey: "AIzaSyDax5mqsMnkh90HXSSzalJEbA_tVBUh3lA",
         authDomain: "casadomar.firebaseapp.com",
@@ -596,6 +649,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     // --------------------------------------------------------------------
     // ESTADO DA APLICAÇÃO (VARIÁVEIS GLOBAIS)
@@ -619,6 +673,7 @@
             activeTab: 'calendario',
         },
         confirmCallback: null,
+        listenersAttached: false,
     };
 
     const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -639,16 +694,14 @@
         const [ano, mes, dia] = dataStr.split('-');
         return `${dia}/${mes}/${ano}`;
     };
-    const showLoader = (show) => { $('#loader').style.display = show ? 'flex' : 'none'; };
+    const showLoader = (show) => { $('#loader').classList.toggle('hidden', !show); };
 
-    // Função para exibir alertas customizados
     const showAlert = (message, title = 'Aviso') => {
         $('#alertTitle').textContent = title;
         $('#alertBody').textContent = message;
         $('#alertModal').classList.add('visible');
     };
 
-    // Função para exibir confirmações customizadas
     const showConfirm = (message, title = 'Confirmar') => {
         return new Promise((resolve) => {
             $('#confirmTitle').textContent = title;
@@ -663,12 +716,71 @@
     };
     
     // --------------------------------------------------------------------
+    // LÓGICA DE AUTENTICAÇÃO
+    // --------------------------------------------------------------------
+    
+    onAuthStateChanged(auth, (user) => {
+        const authContainer = $('#auth-container');
+        const mainContent = $('main');
+        const bottomNav = $('.bottom-nav');
+        const logoutButton = $('#logout-button');
+
+        if (user) {
+            // User is signed in
+            authContainer.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+            bottomNav.classList.remove('hidden');
+            logoutButton.classList.remove('hidden');
+
+            if (!AppState.listenersAttached) {
+                iniciarListenersFirebase();
+                AppState.listenersAttached = true;
+            }
+        } else {
+            // User is signed out
+            authContainer.classList.remove('hidden');
+            mainContent.classList.add('hidden');
+            bottomNav.classList.add('hidden');
+            logoutButton.classList.add('hidden');
+            showLoader(false);
+            AppState.listenersAttached = false;
+        }
+    });
+
+    async function handleLogin(event) {
+        event.preventDefault();
+        const email = $('#email').value;
+        const password = $('#password').value;
+        showLoader(true);
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+            // onAuthStateChanged irá cuidar de esconder o loader e mostrar o app
+        } catch (error) {
+            console.error("Erro de login:", error.code);
+            let friendlyMessage = "Ocorreu um erro ao tentar fazer login.";
+            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                friendlyMessage = "Email ou senha inválidos. Por favor, tente novamente.";
+            }
+            showAlert(friendlyMessage, "Falha no Login");
+        } finally {
+             showLoader(false);
+        }
+    }
+
+    async function handleLogout() {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Erro ao sair:", error);
+            showAlert("Ocorreu um erro ao tentar sair.", "Erro");
+        }
+    }
+
+
+    // --------------------------------------------------------------------
     // LÓGICA DO FIREBASE (BANCO DE DADOS)
     // --------------------------------------------------------------------
 
-    /**
-     * Inicia os listeners para ouvir mudanças em tempo real no Firebase.
-     */
     function iniciarListenersFirebase() {
         showLoader(true);
         let cargasIniciais = {reservas: false, lancamentos: false, calendario: false};
@@ -688,8 +800,11 @@
             } else {
                 renderizarTudo();
             }
-             verificarReservasVencidas(); // Verifica após carregar/atualizar
-        }, (error) => console.error("Erro ao carregar reservas:", error));
+             // verificarReservasVencidas(); // Descomentar quando a função for portada
+        }, (error) => {
+            console.error("Erro ao carregar reservas:", error);
+            showLoader(false);
+        });
 
         onSnapshot(collection(db, "lancamentos"), (snapshot) => {
             AppState.lancamentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -699,7 +814,10 @@
             } else {
                 renderizarTudo();
             }
-        }, (error) => console.error("Erro ao carregar lançamentos:", error));
+        }, (error) => {
+             console.error("Erro ao carregar lançamentos:", error);
+             showLoader(false);
+        });
 
         onSnapshot(doc(db, "calendario", "manual"), (docSnap) => {
             if (docSnap.exists()) {
@@ -713,10 +831,50 @@
             } else {
                 renderizarTudo();
             }
-        }, (error) => console.error("Erro ao carregar calendário manual:", error));
+        }, (error) => {
+            console.error("Erro ao carregar calendário manual:", error);
+            showLoader(false);
+        });
     }
     
-    // ... (restante do script)
+    // ... (restante do script que precisa ser refatorado para o novo estado)
+    function renderizarTudo() {
+        // Esta função centralizará todas as atualizações de UI
+        // Por enquanto, vamos deixar um placeholder
+        console.log("Renderizando tudo com novos dados...");
+        // Ex: renderizarCalendario();
+        // Ex: renderizarReservas();
+        // Ex: renderizarFinanceiro();
+    }
+    
+    // --------------------------------------------------------------------
+    // INICIALIZAÇÃO E EVENT LISTENERS GLOBAIS
+    // --------------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+        // Listeners de Autenticação
+        $('#loginForm').addEventListener('submit', handleLogin);
+        $('#logout-button').addEventListener('click', handleLogout);
+
+        // Listeners para fechar modais
+        $$('[data-close-modal]').forEach(el => {
+            el.addEventListener('click', () => {
+                const modalId = el.getAttribute('data-close-modal');
+                $(`#${modalId}`).classList.remove('visible');
+            });
+        });
+
+        // Listener para o botão de cancelar da confirmação
+        $('#confirmCancelBtn').addEventListener('click', () => {
+            if (AppState.confirmCallback) AppState.confirmCallback(false);
+        });
+
+        // Listener para o botão de OK da confirmação
+        $('#confirmOkBtn').addEventListener('click', () => {
+            if (AppState.confirmCallback) AppState.confirmCallback(true);
+        });
+    });
+
 </script>
 </body>
 </html>
+
