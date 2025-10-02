@@ -105,6 +105,7 @@
             justify-content: center;
             align-items: center;
             z-index: 10000;
+            transition: opacity 0.3s;
         }
         #login-card {
             width: 90%;
@@ -127,6 +128,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            transition: opacity 0.3s;
         }
         .loader {
             border: 8px solid #f3f3f3;
@@ -150,7 +152,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 200;
+            z-index: 10001;
             justify-content: center;
             align-items: center;
         }
@@ -232,7 +234,7 @@
         .calendar-header { font-weight: bold; text-align: center; padding: 8px 2px; background-color: var(--background); font-size: 0.85rem; color: var(--primary-color); }
         .calendar-day { padding: 6px 2px; text-align: center; border-radius: 3px; cursor: pointer; border: 1px solid #D5D5D5; font-size: 0.85rem; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: transform 0.2s; }
         .calendar-day:hover { transform: scale(1.05); }
-        .calendar-day.today { border: 1px solid var(--primary-color); position: relative; }
+        .calendar-day.today { border: 2px solid var(--primary-color); position: relative; font-weight: bold; }
         .calendar-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; color: var(--primary-color); border: 2px solid var(--primary-color); padding: 5px 8px; border-radius: 4px; }
         .calendar-controls button { background: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer; }
         .calendar-controls h3 { margin: 0; font-size: 1rem; text-align: center; flex-grow: 1; }
@@ -241,14 +243,14 @@
         .reserva-limpeza { background-color: #FFA07A; }
         .reserva-servico { background-color: #FFFF99; }
         .legenda-container { display: flex; justify-content: space-evenly; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
-        .legenda-item { display: flex; font-size: 10px; text-align: center; align-items: center; cursor: pointer; padding: 5px; border-radius: 4px; border: 1px solid transparent; }
+        .legenda-item { display: flex; font-size: 10px; text-align: center; align-items: center; cursor: pointer; padding: 5px; border-radius: 4px; border: 1px solid transparent; transition: all 0.2s; }
         .legenda-item.selecionada { border-color: var(--primary-color); background-color: var(--light-color); }
         .legenda-cor { width: 18px; height: 18px; border-radius: 50%; margin-right: 5px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
 
         /* Próximo Evento */
         .next-event-card { margin-top: 20px; }
         .next-event-content .row { display: flex; justify-content: space-between; align-items: center; }
-        .sem-eventos { display: flex; justify-content: center; align-items: center; color: var(--primary-color); }
+        .sem-eventos { display: flex; justify-content: center; align-items: center; color: var(--primary-color); padding: 10px; }
         .next-event-content .evento-tipo { padding: 2px 8px; border-radius: 4px; color: var(--primary-color); margin-right: 10px; }
         .next-event-content .evento-data { display: flex; align-items: center; color: var(--primary-color); }
         .next-event-content .evento-data i.material-icons { margin-right: 5px; }
@@ -348,11 +350,11 @@
                 <form id="loginForm">
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" required>
+                        <input type="email" id="email" required autocomplete="email">
                     </div>
                     <div class="form-group">
                         <label for="password">Senha</label>
-                        <input type="password" id="password" required>
+                        <input type="password" id="password" required autocomplete="current-password">
                     </div>
                     <div class="form-actions" style="justify-content: center;">
                         <button type="submit" class="btn btn-primary">Entrar</button>
@@ -389,9 +391,9 @@
         </div>
     </div>
 
-    <header>
+    <header class="hidden">
         <div class="logo">Casa do Mar</div>
-        <button id="logout-button" class="hidden" title="Sair">
+        <button id="logout-button" title="Sair">
             <i class="material-icons">logout</i>
         </button>
     </header>
@@ -514,7 +516,7 @@
 
         <!-- Orçamento Tab -->
         <div id="orcamento" class="tab-content">
-            <!-- Conteúdo do orçamento -->
+             <!-- O conteúdo do orçamento pode ser adicionado aqui depois -->
         </div>
 
         <!-- Botão Adicionar -->
@@ -635,7 +637,7 @@
     // IMPORTAÇÕES E CONFIGURAÇÃO DO FIREBASE
     // --------------------------------------------------------------------
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    import { getFirestore, doc, collection, setDoc, deleteDoc, onSnapshot, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -652,7 +654,7 @@
     const auth = getAuth(app);
 
     // --------------------------------------------------------------------
-    // ESTADO DA APLICAÇÃO (VARIÁVEIS GLOBAIS)
+    // ESTADO DA APLICAÇÃO
     // --------------------------------------------------------------------
     const AppState = {
         reservas: [],
@@ -673,7 +675,11 @@
             activeTab: 'calendario',
         },
         confirmCallback: null,
-        listenersAttached: false,
+        listeners: { // Para cancelar os listeners ao fazer logout
+            reservas: null,
+            lancamentos: null,
+            calendario: null,
+        },
     };
 
     const MESES = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -710,6 +716,7 @@
             
             AppState.confirmCallback = (result) => {
                 $('#confirmModal').classList.remove('visible');
+                AppState.confirmCallback = null; // Limpa o callback
                 resolve(result);
             };
         });
@@ -722,28 +729,24 @@
     onAuthStateChanged(auth, (user) => {
         const authContainer = $('#auth-container');
         const mainContent = $('main');
+        const header = $('header');
         const bottomNav = $('.bottom-nav');
-        const logoutButton = $('#logout-button');
 
         if (user) {
-            // User is signed in
+            // Usuário logado
             authContainer.classList.add('hidden');
             mainContent.classList.remove('hidden');
+            header.classList.remove('hidden');
             bottomNav.classList.remove('hidden');
-            logoutButton.classList.remove('hidden');
-
-            if (!AppState.listenersAttached) {
-                iniciarListenersFirebase();
-                AppState.listenersAttached = true;
-            }
+            iniciarListenersFirebase();
         } else {
-            // User is signed out
+            // Usuário deslogado
             authContainer.classList.remove('hidden');
             mainContent.classList.add('hidden');
+            header.classList.add('hidden');
             bottomNav.classList.add('hidden');
-            logoutButton.classList.add('hidden');
+            pararListenersFirebase();
             showLoader(false);
-            AppState.listenersAttached = false;
         }
     });
 
@@ -756,97 +759,87 @@
             await signInWithEmailAndPassword(auth, email, password);
             // onAuthStateChanged irá cuidar de esconder o loader e mostrar o app
         } catch (error) {
-            console.error("Erro de login:", error.code);
             let friendlyMessage = "Ocorreu um erro ao tentar fazer login.";
-            if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+            if (['auth/wrong-password', 'auth/user-not-found', 'auth/invalid-credential'].includes(error.code)) {
                 friendlyMessage = "Email ou senha inválidos. Por favor, tente novamente.";
             }
             showAlert(friendlyMessage, "Falha no Login");
-        } finally {
-             showLoader(false);
+            showLoader(false);
         }
     }
 
     async function handleLogout() {
-        try {
-            await signOut(auth);
-        } catch (error) {
-            console.error("Erro ao sair:", error);
-            showAlert("Ocorreu um erro ao tentar sair.", "Erro");
+        if(await showConfirm("Tem certeza que deseja sair?", "Sair")) {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                showAlert("Ocorreu um erro ao tentar sair.", "Erro");
+            }
         }
     }
-
 
     // --------------------------------------------------------------------
     // LÓGICA DO FIREBASE (BANCO DE DADOS)
     // --------------------------------------------------------------------
 
     function iniciarListenersFirebase() {
+        if (AppState.listeners.reservas) return; // Já estão ativos
+
         showLoader(true);
-        let cargasIniciais = {reservas: false, lancamentos: false, calendario: false};
+        const cargasIniciais = {reservas: false, lancamentos: false, calendario: false};
         
         const verificarCargaCompleta = () => {
             if (Object.values(cargasIniciais).every(Boolean)) {
                  showLoader(false);
                  renderizarTudo();
+                 // verificarReservasVencidas(); // Adicionar lógica depois
             }
         };
 
-        onSnapshot(collection(db, "reservas"), (snapshot) => {
+        const reservasRef = collection(db, "reservas");
+        AppState.listeners.reservas = onSnapshot(reservasRef, (snapshot) => {
             AppState.reservas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            if (!cargasIniciais.reservas) {
-                cargasIniciais.reservas = true;
-                verificarCargaCompleta();
-            } else {
-                renderizarTudo();
-            }
-             // verificarReservasVencidas(); // Descomentar quando a função for portada
-        }, (error) => {
-            console.error("Erro ao carregar reservas:", error);
-            showLoader(false);
-        });
+            cargasIniciais.reservas = true;
+            verificarCargaCompleta();
+        }, (error) => console.error("Erro ao carregar reservas:", error));
 
-        onSnapshot(collection(db, "lancamentos"), (snapshot) => {
+        const lancamentosRef = collection(db, "lancamentos");
+        AppState.listeners.lancamentos = onSnapshot(lancamentosRef, (snapshot) => {
             AppState.lancamentos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-             if (!cargasIniciais.lancamentos) {
-                cargasIniciais.lancamentos = true;
-                verificarCargaCompleta();
-            } else {
-                renderizarTudo();
-            }
-        }, (error) => {
-             console.error("Erro ao carregar lançamentos:", error);
-             showLoader(false);
-        });
+            cargasIniciais.lancamentos = true;
+            verificarCargaCompleta();
+        }, (error) => console.error("Erro ao carregar lançamentos:", error));
 
-        onSnapshot(doc(db, "calendario", "manual"), (docSnap) => {
-            if (docSnap.exists()) {
-                AppState.calendarioManual = docSnap.data();
-            } else {
-                AppState.calendarioManual = {};
-            }
-            if (!cargasIniciais.calendario) {
-                cargasIniciais.calendario = true;
-                verificarCargaCompleta();
-            } else {
-                renderizarTudo();
-            }
-        }, (error) => {
-            console.error("Erro ao carregar calendário manual:", error);
-            showLoader(false);
-        });
+        const calendarioRef = doc(db, "calendario", "manual");
+        AppState.listeners.calendario = onSnapshot(calendarioRef, (docSnap) => {
+            AppState.calendarioManual = docSnap.exists() ? docSnap.data() : {};
+            cargasIniciais.calendario = true;
+            verificarCargaCompleta();
+        }, (error) => console.error("Erro ao carregar calendário manual:", error));
     }
     
-    // ... (restante do script que precisa ser refatorado para o novo estado)
+    function pararListenersFirebase() {
+        if (AppState.listeners.reservas) AppState.listeners.reservas();
+        if (AppState.listeners.lancamentos) AppState.listeners.lancamentos();
+        if (AppState.listeners.calendario) AppState.listeners.calendario();
+        AppState.listeners = {reservas: null, lancamentos: null, calendario: null};
+    }
+
+    // --------------------------------------------------------------------
+    // FUNÇÕES PRINCIPAIS DE RENDERIZAÇÃO
+    // --------------------------------------------------------------------
+
     function renderizarTudo() {
-        // Esta função centralizará todas as atualizações de UI
-        // Por enquanto, vamos deixar um placeholder
-        console.log("Renderizando tudo com novos dados...");
-        // Ex: renderizarCalendario();
-        // Ex: renderizarReservas();
-        // Ex: renderizarFinanceiro();
+        renderizarCalendario();
+        renderizarReservas();
+        renderizarFinanceiro();
+        // Adicionar renderizarOrcamento() se necessário
     }
     
+    // ... Aqui entram todas as funções de renderização e lógica do app ...
+    // ... (Vou adicionar a lógica refatorada abaixo) ...
+    
+
     // --------------------------------------------------------------------
     // INICIALIZAÇÃO E EVENT LISTENERS GLOBAIS
     // --------------------------------------------------------------------
@@ -863,16 +856,359 @@
             });
         });
 
-        // Listener para o botão de cancelar da confirmação
         $('#confirmCancelBtn').addEventListener('click', () => {
             if (AppState.confirmCallback) AppState.confirmCallback(false);
         });
-
-        // Listener para o botão de OK da confirmação
         $('#confirmOkBtn').addEventListener('click', () => {
             if (AppState.confirmCallback) AppState.confirmCallback(true);
         });
+
+        // Listeners da UI principal (adicionados aqui para garantir que o DOM existe)
+        $('.bottom-nav').addEventListener('click', (e) => {
+            const navItem = e.target.closest('.nav-item');
+            if(navItem) {
+                const tabName = navItem.dataset.tab;
+                openTab(tabName);
+            }
+        });
+
+        // Adicionar outros listeners principais aqui
+        $('#btn-mes-anterior').addEventListener('click', () => mudarMes(-1));
+        $('#btn-mes-seguinte').addEventListener('click', () => mudarMes(1));
+
+        $('#legenda-container').addEventListener('click', (e) => {
+            const legendaItem = e.target.closest('.legenda-item');
+            if (legendaItem) {
+                selecionarTipoReserva(legendaItem.dataset.tipoReserva);
+            }
+        });
+        
+         $('#reservaForm').addEventListener('submit', handleSalvarReserva);
     });
+
+    // --------------------------------------------------------------------
+    // LÓGICA DO CALENDÁRIO
+    // --------------------------------------------------------------------
+
+    function renderizarCalendario() {
+        const { mes, ano } = AppState.calendario;
+        const calendarGrid = $('#calendar-grid');
+        const mesAtualElement = $('#mesAtual');
+        
+        mesAtualElement.textContent = `${MESES[mes]} ${ano}`;
+        calendarGrid.innerHTML = '';
+
+        const diasSemana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+        diasSemana.forEach(dia => {
+            const header = document.createElement('div');
+            header.className = 'calendar-header';
+            header.textContent = dia;
+            calendarGrid.appendChild(header);
+        });
+
+        const primeiroDia = new Date(ano, mes, 1);
+        const ultimoDia = new Date(ano, mes + 1, 0);
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+
+        let diaSemanaInicio = primeiroDia.getDay();
+        diaSemanaInicio = diaSemanaInicio === 0 ? 6 : diaSemanaInicio - 1;
+
+        for (let i = 0; i < diaSemanaInicio; i++) {
+            calendarGrid.appendChild(document.createElement('div'));
+        }
+
+        const datasReservadas = {};
+        AppState.reservas.forEach(reserva => {
+            let dataCorrente = new Date(reserva.dataEntrada + 'T00:00:00');
+            const dataFim = new Date(reserva.dataSaida + 'T00:00:00');
+            while (dataCorrente <= dataFim) {
+                const dataKey = dataCorrente.toISOString().split('T')[0];
+                datasReservadas[dataKey] = { tipo: 'particular', protegido: true, reserva: reserva };
+                dataCorrente.setDate(dataCorrente.getDate() + 1);
+            }
+        });
+        
+        const calendarioConsolidado = {...AppState.calendarioManual, ...datasReservadas};
+
+        for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+            const diaElement = document.createElement('div');
+            const dataAtual = new Date(ano, mes, dia);
+            const dataKey = dataAtual.toISOString().split('T')[0];
+
+            diaElement.className = 'calendar-day';
+            diaElement.textContent = dia;
+            diaElement.dataset.date = dataKey;
+
+            if (dataAtual.getTime() === hoje.getTime()) {
+                diaElement.classList.add('today');
+            }
+
+            if (calendarioConsolidado[dataKey]) {
+                const info = calendarioConsolidado[dataKey];
+                diaElement.classList.add(`reserva-${info.tipo}`);
+                if (info.reserva) {
+                     diaElement.title = `Reserva: ${info.reserva.nome}\n${formatarData(info.reserva.dataEntrada)} - ${formatarData(info.reserva.dataSaida)}`;
+                }
+            }
+
+            calendarGrid.appendChild(diaElement);
+        }
+        
+        // Adicionar listener de clique para a grade do calendário
+        calendarGrid.addEventListener('click', handleCliqueDiaCalendario);
+    }
+    
+    async function handleCliqueDiaCalendario(e) {
+        if (!e.target.classList.contains('calendar-day') || !e.target.dataset.date) return;
+        
+        const dataKey = e.target.dataset.date;
+        const calendarioConsolidado = { ...AppState.calendarioManual, ...obterDatasReservadas() };
+        
+        if (calendarioConsolidado[dataKey] && calendarioConsolidado[dataKey].protegido) {
+            showAlert('Esta data está bloqueada por uma reserva existente.');
+            return;
+        }
+
+        const novoCalendarioManual = { ...AppState.calendarioManual };
+        if (novoCalendarioManual[dataKey]) {
+            delete novoCalendarioManual[dataKey];
+        } else {
+            novoCalendarioManual[dataKey] = { tipo: AppState.calendario.tipoReservaSelecionado };
+        }
+        
+        try {
+            await setDoc(doc(db, "calendario", "manual"), novoCalendarioManual);
+            // O listener onSnapshot irá chamar a re-renderização automaticamente.
+        } catch(error) {
+            console.error("Erro ao salvar marcação manual:", error);
+            showAlert("Não foi possível salvar a alteração no calendário.");
+        }
+    }
+    
+    function obterDatasReservadas() {
+        const datas = {};
+        AppState.reservas.forEach(reserva => {
+            let dataCorrente = new Date(reserva.dataEntrada + 'T00:00:00');
+            const dataFim = new Date(reserva.dataSaida + 'T00:00:00');
+            while (dataCorrente <= dataFim) {
+                const dataKey = dataCorrente.toISOString().split('T')[0];
+                datas[dataKey] = { tipo: 'particular', protegido: true, reserva: reserva };
+                dataCorrente.setDate(dataCorrente.getDate() + 1);
+            }
+        });
+        return datas;
+    }
+
+    function mudarMes(delta) {
+        AppState.calendario.mes += delta;
+        if (AppState.calendario.mes > 11) {
+            AppState.calendario.mes = 0;
+            AppState.calendario.ano++;
+        } else if (AppState.calendario.mes < 0) {
+            AppState.calendario.mes = 11;
+            AppState.calendario.ano--;
+        }
+        renderizarCalendario();
+    }
+
+    function selecionarTipoReserva(tipo) {
+        AppState.calendario.tipoReservaSelecionado = tipo;
+        $$('.legenda-item').forEach(item => {
+            item.classList.toggle('selecionada', item.dataset.tipoReserva === tipo);
+        });
+    }
+
+
+    // --------------------------------------------------------------------
+    // LÓGICA DE RESERVAS
+    // --------------------------------------------------------------------
+    function renderizarReservas() {
+        const container = $('#reservas-container');
+        container.innerHTML = '';
+        
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+        
+        const filtro = AppState.ui.abaAtivaReservas;
+        
+        const reservasFiltradas = AppState.reservas.filter(reserva => {
+            const fim = new Date(reserva.dataSaida + 'T00:00:00');
+            return filtro === 'ativas' ? fim >= hoje : fim < hoje;
+        });
+
+        // Ordenação
+        reservasFiltradas.sort((a,b) => {
+            const dataA = new Date(a.dataEntrada);
+            const dataB = new Date(b.dataEntrada);
+            return filtro === 'ativas' ? dataA - dataB : dataB - dataA;
+        });
+        
+        if(reservasFiltradas.length === 0) {
+            container.innerHTML = `<p style="padding: 20px; text-align: center;">Nenhuma reserva encontrada.</p>`;
+            return;
+        }
+
+        reservasFiltradas.forEach(reserva => {
+            const el = document.createElement('div');
+            el.className = 'swipe-container';
+            el.innerHTML = criarHTMLReserva(reserva);
+            container.appendChild(el);
+        });
+    }
+
+    function criarHTMLReserva(reserva) {
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+        const inicio = new Date(reserva.dataEntrada + 'T00:00:00');
+        const fim = new Date(reserva.dataSaida + 'T00:00:00');
+        let status = '';
+
+        if (AppState.ui.abaAtivaReservas === 'ativas') {
+            if (hoje >= inicio && hoje <= fim) {
+                status = '<div class="reserva-status ativo">EM ANDAMENTO</div>';
+            } else if (hoje < inicio) {
+                 // Lógica para "Próximo Evento" pode ser adicionada aqui se necessário
+            }
+        }
+        
+        // Sanitização simples para evitar XSS
+        const nomeSeguro = escapeHTML(reserva.nome);
+        const telefoneSeguro = escapeHTML(reserva.telefone);
+        const hospedesSeguro = escapeHTML(reserva.hospedes);
+        const notasSeguras = escapeHTML(reserva.notas);
+
+        return `
+            <div class="swipe-content">
+                <div class="reserva-item">${status}</div>
+                <div class="reserva-detail reserva-row">
+                    <div class="reserva-info">
+                        <i class="material-icons">calendar_today</i>
+                        <span>${formatarData(reserva.dataEntrada)}</span>
+                    </div>
+                    <div class="reserva-info">
+                        <i class="material-icons">calendar_today</i>
+                        <span>${formatarData(reserva.dataSaida)}</span>
+                    </div>
+                </div>
+                <div class="reserva-detail reserva-row">
+                    <div class="reserva-info">
+                        <i class="material-icons">person</i>
+                        <span>${nomeSeguro}</span>
+                    </div>
+                    <div class="reserva-info">
+                        <i class="material-icons">people</i>
+                        <span>${hospedesSeguro} hóspedes</span>
+                    </div>
+                </div>
+                <div class="reserva-detail reserva-row">
+                    <div class="reserva-info">
+                        <i class="material-icons">phone</i>
+                        <a href="https://wa.me/55${telefoneSeguro.replace(/\D/g, '')}" target="_blank" style="color: inherit; text-decoration: none;">
+                            ${telefoneSeguro}
+                        </a>
+                    </div>
+                    <div class="reserva-info">
+                        <i class="material-icons payment-icon ${reserva.pago ? 'pago' : ''}" data-action="toggle-pago" data-id="${reserva.id}">attach_money</i>
+                        <span>${formatarMoeda(reserva.valor)}</span>
+                    </div>
+                </div>
+                ${reserva.notas ? `<div class="reserva-notas">${notasSeguras}</div>` : ''}
+            </div>
+            <div class="swipe-actions">
+                <button class="swipe-action-btn edit" data-action="editar-reserva" data-id="${reserva.id}"><i class="material-icons">edit</i></button>
+                <button class="swipe-action-btn delete" data-action="excluir-reserva" data-id="${reserva.id}"><i class="material-icons">delete</i></button>
+            </div>
+        `;
+    }
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.toString()
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+    
+    async function handleSalvarReserva(event) {
+        event.preventDefault();
+        showLoader(true);
+
+        const id = $('#reservaId').value;
+        const dataEntrada = $('#dataEntrada').value;
+        const dataSaida = $('#dataSaida').value;
+        
+        if (new Date(dataSaida) < new Date(dataEntrada)) {
+            showAlert('A data de saída deve ser posterior à data de entrada!');
+            showLoader(false);
+            return;
+        }
+
+        // Lógica de verificação de conflito
+        const conflito = AppState.reservas.find(r => {
+            if (id && r.id === id) return false; // Ignora a própria reserva ao editar
+            const inicioExistente = new Date(r.dataEntrada);
+            const fimExistente = new Date(r.dataSaida);
+            const inicioNovo = new Date(dataEntrada);
+            const fimNovo = new Date(dataSaida);
+            return inicioNovo <= fimExistente && fimNovo >= inicioExistente;
+        });
+
+        if (conflito) {
+            showAlert(`Conflito de datas com a reserva de ${conflito.nome}.`);
+            showLoader(false);
+            return;
+        }
+
+        const reserva = {
+            nome: $('#nomeHospede').value,
+            telefone: $('#telefoneHospede').value,
+            dataEntrada: dataEntrada,
+            dataSaida: dataSaida,
+            hospedes: $('#quantidadeHospedes').value,
+            valor: parseFloat($('#valorReserva').value),
+            notas: $('#notasReserva').value,
+            pago: id ? (AppState.reservas.find(r => r.id === id)?.pago || false) : false,
+            //createdAt: serverTimestamp() // pode ser útil
+        };
+
+        const docId = id || doc(collection(db, 'reservas')).id;
+        
+        try {
+            await setDoc(doc(db, "reservas", docId), reserva);
+            showAlert('Reserva salva com sucesso!');
+            $('#reservaModal').classList.remove('visible');
+        } catch (error) {
+            console.error("Erro ao salvar reserva:", error);
+            showAlert('Ocorreu um erro ao salvar a reserva.');
+        } finally {
+            showLoader(false);
+        }
+    }
+    
+    // --------------------------------------------------------------------
+    // LÓGICA FINANCEIRA
+    // --------------------------------------------------------------------
+    function renderizarFinanceiro() {
+        // Implementar lógica de renderização financeira aqui
+    }
+
+    // --------------------------------------------------------------------
+    // LÓGICA GERAL DA UI (TABS, MODAIS, ETC)
+    // --------------------------------------------------------------------
+    function openTab(tabName) {
+        $$('.tab-content').forEach(tab => tab.classList.remove('active'));
+        $$('.nav-item').forEach(item => item.classList.remove('active'));
+
+        $(`#${tabName}`).classList.add('active');
+        $(`.nav-item[data-tab="${tabName}"]`).classList.add('active');
+        
+        AppState.ui.activeTab = tabName;
+        $('#add-button').style.display = ['reservas', 'financeiro'].includes(tabName) ? 'flex' : 'none';
+    }
+
 
 </script>
 </body>
